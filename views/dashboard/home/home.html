@@ -1,0 +1,169 @@
+<div class="row">
+    <div class="col-xl-3 col-md-6">
+        <div class="card dashboard-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title text-muted">Toplam Kullanıcı</h5>
+                        <h2 class="mb-0">{{ .InvitationCount }}</h2>
+                        <small class="text-success">+12% geçen aya göre</small>
+                    </div>
+                    <div class="card-icon primary">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card dashboard-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title text-muted">Siparişler</h5>
+                        <h2 class="mb-0">{{ .UserCount }}</h2>
+                        <small class="text-success">+8% geçen aya göre</small>
+                    </div>
+                    <div class="card-icon success">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card dashboard-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title text-muted">{{ .Title }}</h5>
+                        <h2 class="mb-0">₺45,678</h2>
+                        <small class="text-success">+15% geçen aya göre</small>
+                    </div>
+                    <div class="card-icon warning">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card dashboard-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title text-muted">Büyüme</h5>
+                        <h2 class="mb-0">%24.5</h2>
+                        <small class="text-success">+5% geçen aya göre</small>
+                    </div>
+                    <div class="card-icon info">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-lg-8">
+        <div class="card dashboard-card">
+            <div class="card-header bg-transparent border-bottom-0">
+                <h5 class="card-title mb-0">Satış Grafiği</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card dashboard-card">
+            <div class="card-header bg-transparent border-bottom-0">
+                <h5 class="card-title mb-0">Kategori Dağılımı</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card dashboard-card">
+            <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Son Aktiviteler</h5>
+                <button class="btn btn-sm btn-outline-primary">Tümünü Gör</button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Kullanıcı</th>
+                                <th>Aktivite</th>
+                                <th>Tarih</th>
+                                <th>Durum</th>
+                                <th>İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="user-avatar-sm me-2">
+                                            <span>AY</span>
+                                        </div>
+                                        <span>Ahmet Yılmaz</span>
+                                    </div>
+                                </td>
+                                <td>Yeni sipariş oluşturdu</td>
+                                <td>10 Dakika Önce</td>
+                                <td><span class="badge bg-success">Tamamlandı</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary">Detay</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="user-avatar-sm me-2">
+                                            <span>AD</span>
+                                        </div>
+                                        <span>Ayşe Demir</span>
+                                    </div>
+                                </td>
+                                <td>Profil bilgilerini güncelledi</td>
+                                <td>25 Dakika Önce</td>
+                                <td><span class="badge bg-info">İşlemde</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary">Detay</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="user-avatar-sm me-2">
+                                            <span>MK</span>
+                                        </div>
+                                        <span>Mehmet Kaya</span>
+                                    </div>
+                                </td>
+                                <td>Ödeme yaptı</td>
+                                <td>1 Saat Önce</td>
+                                <td><span class="badge bg-success">Tamamlandı</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary">Detay</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

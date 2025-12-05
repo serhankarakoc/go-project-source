@@ -1,0 +1,83 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card dashboard-card">
+            <div class="card-header bg-transparent border-bottom" style="padding: 1.25rem 2rem;">
+                <h5 class="card-title mb-0" style="font-weight: 600; font-size: 1.2rem;">
+                    <i class="fas fa-edit me-2"></i>Kullanıcı Tipi Düzenle
+                </h5>
+            </div>
+            <div class="card-body" style="padding: 2rem;">
+                <form id="userTypeForm" method="POST" action="/dashboard/user-types/update/{{.UserType.ID}}" novalidate>
+                    <input type="hidden" name="csrf_token" value="{{ .CsrfToken }}" />
+                    <input type="hidden" name="id" value="{{.UserType.ID}}">
+                    
+                    <!-- Kullanıcı Tipi Bilgileri -->
+                    <div class="form-section">
+                        <h6 class="form-section-title">Kullanıcı Tipi Bilgileri</h6>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-8">
+                                <label for="name" class="form-label">Kullanıcı Tipi Adı <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control {{if .ValidationErrors.name}}is-invalid{{end}}" 
+                                       id="name" name="name" 
+                                       value="{{if .Old}}{{.Old.name}}{{else}}{{.UserType.Name}}{{end}}" 
+                                       placeholder="Örn: Admin, Kullanıcı, Editör" required>
+                                {{if .ValidationErrors.name}}
+                                <div class="invalid-feedback">
+                                    {{.ValidationErrors.name}}
+                                </div>
+                                {{end}}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="is_active" class="form-label">Durum <span class="text-danger">*</span></label>
+                                <select class="form-select {{if .ValidationErrors.is_active}}is-invalid{{end}}" 
+                                        id="is_active" name="is_active" required>
+                                    <option value="">Seçiniz...</option>
+                                    <option value="true" 
+                                        {{if .Old}}
+                                            {{if eq .Old.is_active "true"}}selected{{end}}
+                                        {{else}}
+                                            {{if .UserType.IsActive}}selected{{end}}
+                                        {{end}}>Aktif</option>
+                                    <option value="false"
+                                        {{if .Old}}
+                                            {{if eq .Old.is_active "false"}}selected{{end}}
+                                        {{else}}
+                                            {{if not .UserType.IsActive}}selected{{end}}
+                                        {{end}}>Pasif</option>
+                                </select>
+                                {{if .ValidationErrors.is_active}}
+                                <div class="invalid-feedback">
+                                    {{.ValidationErrors.is_active}}
+                                </div>
+                                {{end}}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-12">
+                                <small class="text-muted d-block mt-2">
+                                    <i class="fas fa-info-circle"></i> Kullanıcı tipi adı en az 2 karakter olmalıdır.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Butonlar -->
+                    <div class="row mt-5">
+                        <div class="col-md-4">
+                            <a href="/dashboard/user-types" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-arrow-left me-2"></i>Geri Dön
+                            </a>
+                        </div>
+                        <div class="col-md-8">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-save me-2"></i>Güncelle
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

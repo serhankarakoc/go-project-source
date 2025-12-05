@@ -1,0 +1,73 @@
+<div class="auth-body">
+    {{if .PendingVerification}}
+    <div class="alert alert-warning mb-3">
+        <h5 class="alert-heading mb-2">E-posta Doğrulama Gerekli!</h5>
+        {{if .UserEmail}}
+        <p class="mb-2">
+            <strong>{{.UserEmail}}</strong> adresiniz doğrulanmamış.
+        </p>
+        <p class="mb-1">
+            Doğrulama linkini e-postanızdan kontrol edin veya 
+            <a href="/auth/resend-verification?email={{.UserEmail}}" class="alert-link">
+                yeniden gönder
+            </a>.
+        </p>
+        {{else}}
+        <p class="mb-1">
+            Onay maili gelmedi mi? 
+            <a href="/auth/resend-verification" class="alert-link">Tekrar Gönder</a>
+        </p>
+        {{end}}
+    </div>
+    {{end}}
+    
+    <form id="authForm" method="POST" action="/auth/login">
+        <input type="hidden" name="csrf_token" value="{{ .CsrfToken }}">
+        
+        <div class="form-group">
+            <label class="form-label" for="email">E-posta</label>
+            <div class="input-group">
+                <div class="input-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <input type="text" class="form-control" id="email" name="email" placeholder="ornek@email.com" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="password">Parola</label>
+            <div class="input-group">
+                <div class="input-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <input type="password" class="form-control" id="password" name="password" placeholder="••••••••" required>
+            </div>
+        </div>
+
+        <div class="remember-me">
+            <input type="checkbox" id="remember" name="remember">
+            <label for="remember">Beni hatırla</label>
+        </div>
+
+        <button type="submit" class="btn-auth">
+            <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
+        </button>
+        
+        <div class="auth-separator">
+            <span>veya</span>
+        </div>
+        
+        <button type="button" class="btn btn-google" onclick="window.location.href='/auth/google/login'">
+            <i class="fab fa-google me-2"></i>Google ile Giriş Yap
+        </button>
+        
+    </form>
+
+    <div class="auth-footer">
+        <p class="auth-helper-text">
+            Hesabınız yok mu? <a href="/auth/register" class="link auth-link-small">Hemen kaydolun</a>
+        </p>
+        
+        <a href="/auth/forgot-password" class="forgot-password mt-3 d-inline-block">Şifremi Unuttum?</a>
+    </div>
+</div>

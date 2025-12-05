@@ -1,0 +1,266 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card dashboard-card">
+            <div class="card-header bg-transparent border-bottom" style="padding: 1.25rem 2rem;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0" style="font-weight: 600; font-size: 1.2rem;"><i class="fas fa-users me-2"></i>{{.Title}}</h5>
+                    <a href="/dashboard/users/create" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus me-2"></i>Yeni Kullanıcı
+                    </a>
+                </div>
+            </div>
+            <div class="card-body" style="padding: 2rem;">
+                <!-- Filtre Bölümü - Input Üstte 12, Altta 2-2-2-3-3 -->
+                <div class="mb-4">
+                    <div class="border rounded bg-white shadow-sm p-4">
+                        <form method="GET" action="/dashboard/users">
+                            <!-- ÜST SATIR: Arama Input'u (12 kolon) -->
+                            <div class="row mb-4">
+                                <!-- Arama Input'u (4 kolon) -->
+                                <div class="col-xl-4 col-lg-4 col-md-4">
+                                    <input type="text" class="form-control {{if .ValidationErrors.name}}is-invalid{{end}}" 
+                                        name="name" value="{{.Params.Name}}" 
+                                        placeholder="Kullanıcı tipi ara...">
+                                    {{if .ValidationErrors.name}}
+                                    <div class="invalid-feedback">
+                                        {{.ValidationErrors.name}}
+                                    </div>
+                                    {{end}}
+                                </div>
+                                
+                                <!-- Durum Select'i (4 kolon) -->
+                                <div class="col-xl-4 col-lg-4 col-md-4">
+                                    <select class="form-select {{if .ValidationErrors.is_active}}is-invalid{{end}}" 
+                                        name="is_active">
+                                        <option value="">Tüm Durumlar</option>
+                                        <option value="true" {{if eq .Params.IsActive "true"}}selected{{end}}>Aktif</option>
+                                        <option value="false" {{if eq .Params.IsActive "false"}}selected{{end}}>Pasif</option>
+                                    </select>
+                                    {{if .ValidationErrors.is_active}}
+                                    <div class="invalid-feedback">
+                                        {{.ValidationErrors.is_active}}
+                                    </div>
+                                    {{end}}
+                                </div>
+
+                                <!-- Tür Select'i (4 kolon) -->
+                                <div class="col-xl-4 col-lg-4 col-md-4">
+                                    <select class="form-select {{if .ValidationErrors.user_type_id}}is-invalid{{end}}" 
+                                        name="user_type_id">
+                                        <option value="">Tüm Türler</option>
+                                        <option value="1" {{if eq .Params.UserTypeId 1}}selected{{end}}>Dashboard</option>
+                                        <option value="2" {{if eq .Params.UserTypeId 2}}selected{{end}}>Panel</option>
+                                    </select>
+                                    {{if .ValidationErrors.user_type_id}}
+                                    <div class="invalid-feedback">
+                                        {{.ValidationErrors.user_type_id}}
+                                    </div>
+                                    {{end}}
+                                </div>
+                            </div>
+                            
+                            <!-- ALT SATIR: 5'li Kontroller Grid (2-2-2-3-3) -->
+                            <div class="row g-3 align-items-end">
+                                <!-- Sıralama Alanı (2 kolon) -->
+                                <div class="col-xl-2 col-lg-4 col-md-6">
+                                    <label class="form-label small text-muted mb-1">Sırala</label>
+                                    <select class="form-select" name="sortBy">
+                                        <option value="id" {{if eq .Params.SortBy "id"}}selected{{end}}>ID</option>
+                                        <option value="name" {{if eq .Params.SortBy "name"}}selected{{end}}>Ad</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Sıralama Yönü (2 kolon) -->
+                                <div class="col-xl-2 col-lg-4 col-md-6">
+                                    <label class="form-label small text-muted mb-1">Yön</label>
+                                    <select class="form-select" name="orderBy">
+                                        <option value="asc" {{if eq .Params.OrderBy "asc"}}selected{{end}}>A-Z</option>
+                                        <option value="desc" {{if eq .Params.OrderBy "desc"}}selected{{end}}>Z-A</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Kayıt Sayısı (2 kolon) -->
+                                <div class="col-xl-2 col-lg-4 col-md-6">
+                                    <label class="form-label small text-muted mb-1">Kayıt</label>
+                                    <select class="form-select" name="perPage">
+                                        <option value="20" {{if or (eq .Params.PerPage 20) (not .Params.PerPage)}}selected{{end}}>20</option>
+                                        <option value="50" {{if eq .Params.PerPage 50}}selected{{end}}>50</option>
+                                        <option value="100" {{if eq .Params.PerPage 100}}selected{{end}}>100</option>
+                                        <option value="200" {{if eq .Params.PerPage 200}}selected{{end}}>200</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Filtrele Butonu (3 kolon) -->
+                                <div class="col-xl-3 col-lg-6 col-md-6">
+                                    <label class="form-label small text-muted mb-1 d-block">&nbsp;</label>
+                                    <button type="submit" class="btn btn-primary w-100 py-2">
+                                        <i class="fas fa-filter me-2"></i> Filtrele
+                                    </button>
+                                </div>
+                                
+                                <!-- Sıfırla Butonu (3 kolon) -->
+                                <div class="col-xl-3 col-lg-6 col-md-6">
+                                    <label class="form-label small text-muted mb-1 d-block">&nbsp;</label>
+                                    <a href="/dashboard/users" class="btn btn-outline-danger w-100 py-2">
+                                        <i class="fas fa-times-circle me-2"></i> Sıfırla
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- Gizli Alanlar -->
+                            <input type="hidden" name="page" value="{{.Params.Page}}">
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Tablo -->
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Kullanıcı</th>
+                                <th>E-posta</th>
+                                <th>Kullanıcı Tipi</th>
+                                <th>Durum</th>
+                                <th>E-posta Doğrulama</th>
+                                <th class="text-center">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{if .Result.Data}}
+                            {{range .Result.Data}}
+                            <tr>
+                                <td>{{.ID}}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div>
+                                            <p class="mb-0" style="font-weight: 500;">{{.Name}}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{.Email}}</td>
+                                <td>
+                                    {{if eq .UserTypeID 1}}
+                                        <span class="badge bg-success">Dashboard</span>
+                                    {{else if eq .UserTypeID 2}}
+                                        <span class="badge bg-info">Panel</span>
+                                    {{else}}
+                                        <span class="badge bg-secondary">Tanımsız</span>
+                                    {{end}}
+                                </td>
+                                <td>
+                                    {{if .IsActive}}
+                                    <span class="badge bg-success">Aktif</span>
+                                    {{else}}
+                                    <span class="badge bg-secondary">Pasif</span>
+                                    {{end}}
+                                </td>
+                                <td>
+                                    {{if .EmailVerified}}
+                                    <span class="badge bg-success">Evet</span>
+                                    {{else}}
+                                    <span class="badge bg-warning">Hayır</span>
+                                    {{end}}
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="/dashboard/users/update/{{.ID}}" class="btn btn-sm btn-outline-primary" title="Düzenle">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form id="deleteForm-{{.ID}}" action="/dashboard/users/delete/{{.ID}}" method="POST" class="d-inline">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            {{if $.CsrfToken}}
+                                            <input type="hidden" name="csrf_token" value="{{$.CsrfToken}}">
+                                            {{end}}
+                                            <button type="button" onclick="confirmDelete('{{.ID}}')" class="btn btn-sm btn-outline-danger" title="Sil">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {{end}}
+                            {{else}}
+                            <tr>
+                                <td colspan="7" class="text-center py-4">
+                                    <div class="text-muted">Gösterilecek kayıt bulunamadı. Filtreleri temizlemeyi deneyin.</div>
+                                </td>
+                            </tr>
+                            {{end}}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                {{template "pagination" .}}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Script -->
+<script>
+    function confirmDelete(id) {
+        const formElement = document.getElementById(`deleteForm-${id}`);
+        const csrfTokenInput = formElement ? formElement.querySelector('input[name="csrf_token"]') : null;
+        const csrfToken = csrfTokenInput ? csrfTokenInput.value : null;
+
+        Swal.fire({
+            title: 'Emin misiniz?',
+            text: "Bu kullanıcıyı silmek istediğinize emin misiniz? Bu işlem geri alınamaz!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Evet, sil!',
+            cancelButtonText: 'İptal',
+            customClass: {
+                confirmButton: 'btn btn-danger me-2',
+                cancelButton: 'btn btn-secondary'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const url = `/dashboard/users/delete/${id}`;
+                const headers = {
+                    'Accept': 'application/json',
+                };
+
+                if (csrfToken) {
+                    headers['X-CSRF-Token'] = csrfToken;
+                }
+
+                fetch(url, {
+                    method: 'DELETE',
+                    headers: headers
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => { 
+                            throw new Error(text || `HTTP error! status: ${response.status}`) 
+                        });
+                    }
+                    return response.json();
+                })
+                .then(() => {
+                    Swal.fire(
+                        'Silindi!',
+                        'Kullanıcı başarıyla silindi.',
+                        'success'
+                    ).then(() => {
+                        window.location.reload();
+                    });
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    Swal.fire(
+                        'Hata!',
+                        `Kullanıcı silinirken bir hata oluştu: ${error.message}`,
+                        'error'
+                    );
+                });
+            }
+        });
+    }
+</script>

@@ -1,0 +1,127 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card dashboard-card">
+            <div class="card-header bg-transparent border-bottom" style="padding: 1.25rem 2rem;">
+                <h5 class="card-title mb-0" style="font-weight: 600; font-size: 1.2rem;"><i class="fas fa-user-plus me-2"></i>Yeni Kullanıcı Ekle</h5>
+            </div>
+            <div class="card-body" style="padding: 2rem;">
+                <form id="userForm" method="POST" action="/dashboard/users/create" novalidate>
+                  <input type="hidden" name="csrf_token" value="{{ .CsrfToken }}" />
+                  
+                    <!-- Kişisel Bilgiler -->
+                    <div class="form-section">
+                        <h6 class="form-section-title">Kişisel Bilgiler</h6>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Ad Soyad <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control {{if .ValidationErrors.name}}is-invalid{{end}}" id="name" name="name" value="{{if .Old}}{{.Old.name}}{{end}}" placeholder="Adınız Soyadınız" required>
+                                {{if .ValidationErrors.name}}
+                                <div class="invalid-feedback">
+                                    {{.ValidationErrors.name}}
+                                </div>
+                                {{end}}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">E-posta <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control {{if .ValidationErrors.email}}is-invalid{{end}}" id="email" name="email" value="{{if .Old}}{{.Old.email}}{{end}}" placeholder="E-posta Adresiniz" required>
+                                {{if .ValidationErrors.email}}
+                                <div class="invalid-feedback">
+                                    {{.ValidationErrors.email}}
+                                </div>
+                                {{end}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hesap Bilgileri -->
+                    <div class="form-section">
+                        <h6 class="form-section-title">Hesap Bilgileri</h6>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="password" class="form-label">Şifre <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control {{if .ValidationErrors.password}}is-invalid{{end}}" id="password" name="password" placeholder="Şifreniz" required>
+                                {{if .ValidationErrors.password}}
+                                <div class="invalid-feedback">
+                                    {{.ValidationErrors.password}}
+                                </div>
+                                {{end}}
+                                <small class="text-muted d-block mt-2"><i class="fas fa-info-circle"></i> En az 8 karakter, 1 büyük harf, 1 küçük harf ve 1 sayı içermelidir.</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="confirmPassword" class="form-label">Şifre Tekrar <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control {{if .ValidationErrors.confirmPassword}}is-invalid{{end}}" id="confirmPassword" name="confirmPassword" placeholder="Şifreniz" required>
+                                {{if .ValidationErrors.confirmPassword}}
+                                <div class="invalid-feedback">
+                                    {{.ValidationErrors.confirmPassword}}
+                                </div>
+                                {{else}}
+                                <div class="invalid-feedback">
+                                    Şifreler eşleşmiyor.
+                                </div>
+                                {{end}}
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <label for="user_type_id" class="form-label">Kullanıcı Türü <span class="text-danger">*</span></label>
+                                <select class="form-select {{if .ValidationErrors.user_type_id}}is-invalid{{end}}" id="user_type_id" name="user_type_id" required>
+                                    <option value="">Seçiniz...</option>
+                                    <option value="1" {{if and .Old (eq .Old.user_type_id "1")}}selected{{end}}>Dashboard</option>
+                                    <option value="2" {{if and .Old (eq .Old.user_type_id "2")}}selected{{end}}>Panel</option>
+                                </select>
+                                {{if .ValidationErrors.user_type_id}}
+                                <div class="invalid-feedback">
+                                    {{.ValidationErrors.user_type_id}}
+                                </div>
+                                {{end}}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="is_active" class="form-label">Durum <span class="text-danger">*</span></label>
+                                <select class="form-select {{if .ValidationErrors.is_active}}is-invalid{{end}}" id="is_active" name="is_active" required>
+                                    <option value="">Seçiniz...</option>
+                                    <option value="true" {{if and .Old (eq .Old.is_active "true")}}selected{{end}}>Aktif</option>
+                                    <option value="false" {{if and .Old (eq .Old.is_active "false")}}selected{{end}}>Pasif</option>
+                                </select>
+                                {{if .ValidationErrors.is_active}}
+                                <div class="invalid-feedback">
+                                    {{.ValidationErrors.is_active}}
+                                </div>
+                                {{end}}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="email_verified" class="form-label">E-posta Onayı <span class="text-danger">*</span></label>
+                                <select class="form-select {{if .ValidationErrors.email_verified}}is-invalid{{end}}" id="email_verified" name="email_verified" required>
+                                    <option value="">Seçiniz...</option>
+                                    <option value="true" {{if and .Old (eq .Old.email_verified "true")}}selected{{end}}>Evet</option>
+                                    <option value="false" {{if and .Old (eq .Old.email_verified "false")}}selected{{end}}>Hayır</option>
+                                </select>
+                                {{if .ValidationErrors.email_verified}}
+                                <div class="invalid-feedback">
+                                    {{.ValidationErrors.email_verified}}
+                                </div>
+                                {{end}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Butonlar (Geri Dön: 4 birim, Kaydet: 8 birim) -->
+                    <div class="row mt-5">
+                        <div class="col-md-4">
+                            <a href="/dashboard/users" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-arrow-left me-2"></i>Geri Dön
+                            </a>
+                        </div>
+                        <div class="col-md-8">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-save me-2"></i>Kaydet
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

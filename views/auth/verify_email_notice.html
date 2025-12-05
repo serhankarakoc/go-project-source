@@ -1,0 +1,26 @@
+<div class="auth-body">
+    <form id="authForm" method="POST" action="/auth/login">
+        <input type="hidden" name="csrf_token" value="{{ .CsrfToken }}">
+        
+        <p class="auth-helper-text" style="text-align: center; margin-bottom: 30px;">
+            Lütfen e-posta adresinize gönderilen **doğrulama linkine** tıklayın.<br>
+            Mail kutunuzu (ve spam/önemsiz klasörünü) kontrol etmeyi unutmayın.
+        </p>
+
+        <button 
+            type="button" 
+            class="btn-auth" 
+            onclick="window.location.href='/auth/resend-verification'"
+        >
+            <i class="fas fa-redo me-2"></i>Doğrulama Mailini Tekrar Gönder
+        </button>
+        
+    </form>
+
+    <div class="auth-footer">
+        <p class="auth-helper-text">
+            <a href="/auth/login" class="link auth-link-small">Girişe Dön</a>
+        </p>
+        
+    </div>
+</div>

@@ -1,0 +1,638 @@
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2 fw-bold">{{.Title}}</h1>
+  <a href="/panel/davetiyeler" class="btn btn-outline-primary d-flex align-items-center gap-2">
+    <i class="bi bi-arrow-left"></i> Listeye Dön
+  </a>
+</div>
+
+<div class="card card-glass mb-4">
+  <div class="card-body">
+    <form method="POST" action="/panel/davetiyeler/guncelle/{{.Invitation.ID}}" id="invitation-form" enctype="multipart/form-data">
+      <input type="hidden" name="csrf_token" value="{{ .CsrfToken }}">
+      <input type="hidden" name="_method" value="PUT">
+
+      <div class="mb-4 text-center">
+        <h2 class="mb-1">{{.Invitation.Category.Name}} Davetiyesi</h2>
+        <hr class="mt-2 mb-3">
+        <input type="hidden" name="category_id" value="{{.Invitation.CategoryID}}">
+      </div>
+
+      {{if .Invitation.CategoryID}}
+      <div id="invitationRow">
+
+        {{if or (eq .Invitation.Category.Template "title") (eq .Invitation.Category.Template "online")}}
+        <div id="titleRow" class="mb-4">
+          <label class="form-label">Başlık <span class="text-danger">*</span></label>
+          <input type="text" name="detail[title]" class="form-control" value="{{.Invitation.InvitationDetail.Title}}">
+        </div>
+        {{end}}
+
+        {{if or (eq .Invitation.Category.Template "person") (eq .Invitation.Category.Template "person-family")}}
+        <div id="personRow" class="mb-4">
+          <label class="form-label">Kimin Adına? (Ad Soyad) <span class="text-danger">*</span></label>
+          <input type="text" name="detail[person]" class="form-control" value="{{.Invitation.InvitationDetail.Person}}">
+        </div>
+        {{end}}
+
+        {{if eq .Invitation.Category.Template "person-family"}}
+        <div id="familyRow" class="row">
+          <div class="col-md-6">
+            <div class="card mb-4">
+              <div class="card-header bg-light">
+                <h5 class="mb-0">Anne Bilgileri</h5>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-2 mb-3">
+                    <label class="form-label">Anne Yaşıyor mu?</label>
+                    <select name="detail[is_mother_live]" class="form-select">
+                      <option value="">Seçiniz</option>
+                      <option value="true" {{if eq .Invitation.InvitationDetail.IsMotherLive true}}selected{{end}}>Evet</option>
+                      <option value="false" {{if eq .Invitation.InvitationDetail.IsMotherLive false}}selected{{end}}>Hayır</option>
+                    </select>
+                  </div>
+                  <div class="col-md-5 mb-3">
+                    <label class="form-label">Anne Adı <span class="text-danger">*</span></label>
+                    <input type="text" name="detail[mother_name]" class="form-control" value="{{.Invitation.InvitationDetail.MotherName}}">
+                  </div>
+                  <div class="col-md-5 mb-3">
+                    <label class="form-label">Anne Soyadı <span class="text-danger">*</span></label>
+                    <input type="text" name="detail[mother_surname]" class="form-control" value="{{.Invitation.InvitationDetail.MotherSurname}}">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-6">
+            <div class="card mb-4">
+              <div class="card-header bg-light">
+                <h5 class="mb-0">Baba Bilgileri</h5>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-2 mb-3">
+                    <label class="form-label">Baba Yaşıyor mu?</label>
+                    <select name="detail[is_father_live]" class="form-select">
+                      <option value="">Seçiniz</option>
+                      <option value="true" {{if eq .Invitation.InvitationDetail.IsFatherLive true}}selected{{end}}>Evet</option>
+                      <option value="false" {{if eq .Invitation.InvitationDetail.IsFatherLive false}}selected{{end}}>Hayır</option>
+                    </select>
+                  </div>
+                  <div class="col-md-5 mb-3">
+                    <label class="form-label">Baba Adı <span class="text-danger">*</span></label>
+                    <input type="text" name="detail[father_name]" class="form-control" value="{{.Invitation.InvitationDetail.FatherName}}">
+                  </div>
+                  <div class="col-md-5 mb-3">
+                    <label class="form-label">Baba Soyadı <span class="text-danger">*</span></label>
+                    <input type="text" name="detail[father_surname]" class="form-control" value="{{.Invitation.InvitationDetail.FatherSurname}}">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {{end}}
+
+        {{if eq .Invitation.Category.Template "wedding"}}
+        <div id="weddingRow" class="row">
+          <div class="col-md-12">
+            <div class="card mb-4">
+              <div class="card-header bg-light">
+                <h5 class="mb-0">Gelin Bilgileri</h5>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Adı <span class="text-danger">*</span></label>
+                    <input type="text" name="detail[bride_name]" class="form-control" value="{{.Invitation.InvitationDetail.BrideName}}">
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Soyadı <span class="text-danger">*</span></label>
+                    <input type="text" name="detail[bride_surname]" class="form-control" value="{{.Invitation.InvitationDetail.BrideSurname}}">
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Annesi Yaşıyor mu?</label>
+                    <select name="detail[is_bride_mother_live]" class="form-select">
+                      <option value="">Seçiniz</option>
+                      <option value="true" {{if eq .Invitation.InvitationDetail.IsBrideMotherLive true}}selected{{end}}>Evet</option>
+                      <option value="false" {{if eq .Invitation.InvitationDetail.IsBrideMotherLive false}}selected{{end}}>Hayır</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Annesinin Adı</label>
+                    <input type="text" name="detail[bride_mother_name]" class="form-control" value="{{.Invitation.InvitationDetail.BrideMotherName}}">
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Annesinin Soyadı</label>
+                    <input type="text" name="detail[bride_mother_surname]" class="form-control" value="{{.Invitation.InvitationDetail.BrideMotherSurname}}">
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Babası Yaşıyor mu?</label>
+                    <select name="detail[is_bride_father_live]" class="form-select">
+                      <option value="">Seçiniz</option>
+                      <option value="true" {{if eq .Invitation.InvitationDetail.IsBrideFatherLive true}}selected{{end}}>Evet</option>
+                      <option value="false" {{if eq .Invitation.InvitationDetail.IsBrideFatherLive false}}selected{{end}}>Hayır</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Babasının Adı</label>
+                    <input type="text" name="detail[bride_father_name]" class="form-control" value="{{.Invitation.InvitationDetail.BrideFatherName}}">
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Babasının Soyadı</label>
+                    <input type="text" name="detail[bride_father_surname]" class="form-control" value="{{.Invitation.InvitationDetail.BrideFatherSurname}}">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <div class="card mb-4">
+              <div class="card-header bg-light">
+                <h5 class="mb-0">Damat Bilgileri</h5>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Adı <span class="text-danger">*</span></label>
+                    <input type="text" name="detail[groom_name]" class="form-control" value="{{.Invitation.InvitationDetail.GroomName}}">
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Soyadı <span class="text-danger">*</span></label>
+                    <input type="text" name="detail[groom_surname]" class="form-control" value="{{.Invitation.InvitationDetail.GroomSurname}}">
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Annesi Yaşıyor mu?</label>
+                    <select name="detail[is_groom_mother_live]" class="form-select">
+                      <option value="">Seçiniz</option>
+                      <option value="true" {{if eq .Invitation.InvitationDetail.IsGroomMotherLive true}}selected{{end}}>Evet</option>
+                      <option value="false" {{if eq .Invitation.InvitationDetail.IsGroomMotherLive false}}selected{{end}}>Hayır</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Annesinin Adı</label>
+                    <input type="text" name="detail[groom_mother_name]" class="form-control" value="{{.Invitation.InvitationDetail.GroomMotherName}}">
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Annesinin Soyadı</label>
+                    <input type="text" name="detail[groom_mother_surname]" class="form-control" value="{{.Invitation.InvitationDetail.GroomMotherSurname}}">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Babası Yaşıyor mu?</label>
+                    <select name="detail[is_groom_father_live]" class="form-select">
+                      <option value="">Seçiniz</option>
+                      <option value="true" {{if eq .Invitation.InvitationDetail.IsGroomFatherLive true}}selected{{end}}>Evet</option>
+                      <option value="false" {{if eq .Invitation.InvitationDetail.IsGroomFatherLive false}}selected{{end}}>Hayır</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Babasının Adı</label>
+                    <input type="text" name="detail[groom_father_name]" class="form-control" value="{{.Invitation.InvitationDetail.GroomFatherName}}">
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Babasının Soyadı</label>
+                    <input type="text" name="detail[groom_father_surname]" class="form-control" value="{{.Invitation.InvitationDetail.GroomFatherSurname}}">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {{end}}
+
+        <hr class="my-4">
+        {{if not .Invitation.IsFree}}
+        <div class="mb-3">
+          <label class="form-label">(RSVP/LCV) Katılımcılar bilgi versin mi? <span class="text-danger">*</span></label>
+          <select name="is_participant" class="form-select" required>
+            <option value="false" {{if eq .Invitation.IsParticipant false}}selected{{end}}>Hayır</option>
+            <option value="true" {{if eq .Invitation.IsParticipant true}}selected{{end}}>Evet</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Davetiye tek kişilik mi? <span class="text-danger">*</span></label>
+          <select name="is_multiple_participant" class="form-select" required>
+            <option value="true" {{if eq .Invitation.IsMultipleParticipant true}}selected{{end}}>Evet</option>
+            <option value="false" {{if eq .Invitation.IsMultipleParticipant false}}selected{{end}}>Hayır</option>
+          </select>
+        </div>
+        {{end}}
+        <div class="mb-3">
+          <label class="form-label">Davetiye Metni <span class="text-danger">*</span></label>
+          <textarea name="description" class="form-control" rows="5" required>{{.Invitation.Description}}</textarea>
+        </div>
+        
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Tarih <span class="text-danger">*</span></label>
+              <input type="text" id="date" name="date" class="form-control" value="{{.Invitation.Date.Format "02.01.2006"}}" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Saat <span class="text-danger">*</span></label>
+            <input type="time" name="time" class="form-control" value="{{.Invitation.Time}}" required>
+          </div>
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label">Not (İsteğe Bağlı)</label>
+          <textarea name="note" class="form-control" rows="3">{{.Invitation.Note}}</textarea>
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label">İletişim Numarası <span class="text-danger">*</span></label>
+          <input type="tel" name="telephone" id="telephone" class="form-control" value="{{.Invitation.Telephone}}" required>
+        </div>
+        
+        {{if eq .Invitation.Category.Template "online"}}
+        <div id="linkRow" class="mb-3">
+          <label class="form-label">Online Davetiye Linki <span class="text-danger">*</span></label>
+          <input type="url" name="link" id="link_input" class="form-control" value="{{.Invitation.Link}}">
+        </div>
+        {{else}}
+        <div id="locationRow" class="mb-3">
+          <label class="form-label">Konum (Google Haritalar)</label>
+          <div class="row g-2 mb-2">
+            <div class="col-12 col-md-6">
+              <input type="text" class="form-control" id="venue_input" name="venue" placeholder="Lokasyon Adı" value="{{.Invitation.Venue}}">
+            </div>
+            <div class="col-12 col-md-6">
+              <input type="text" class="form-control" id="address_input" name="address" placeholder="Açık Adres" value="{{.Invitation.Address}}">
+            </div>
+            <div class="col-12 mt-2 d-flex flex-wrap flex-md-nowrap gap-2">
+                <button type="button" class="btn btn-outline-primary w-100" id="previewLocationBtn">
+                    <i class="bi bi-eye"></i> Konumu Önizle
+                </button>
+                <button type="button" class="btn btn-primary w-100" id="saveLocationBtn">
+                    <i class="bi bi-save"></i> Konumu Kaydet
+                </button>
+            </div>
+          </div>
+          <div class="form-text mt-1">Konumu güncellemek isterseniz, yeni bilgileri girip önce önizleyin, sonra “Kaydet” butonuna basın.</div>
+
+          <input type="hidden" name="location" id="location" value="{{.Invitation.Location}}">
+          <div id="mapContainer" class="mt-3 border rounded overflow-hidden {{ if .Invitation.Location }}{{ else }}d-none{{ end }}">
+            <iframe id="mapFrame" style="width:100%; height:400px; border:none;" src="{{.Invitation.Location}}" loading="lazy"></iframe>
+          </div>
+        </div>
+        {{end}}
+        
+        <div class="mb-3">
+          <label class="form-label">Davetiye Resmi <span class="text-danger">*</span></label>
+          {{if not .Invitation.IsFree}}
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle-fill"></i> Lütfen dikey (portrait) formatta, 1080x1920 piksel boyutlarında ve 2MB'tan küçük bir resim yükleyin.
+          </div>
+          <input type="file" name="image" id="image" class="form-control" accept="image/*">
+          {{end}}
+          <input type="hidden" name="existing_image" id="existingImageInput" value="{{.Invitation.Image}}">
+          <div class="d-flex gap-2 mt-2">
+            <button type="button" id="openImageGalleryBtn" class="btn btn-outline-primary">
+              <i class="bi bi-images"></i> Galeriden Seç
+            </button>
+            <button type="button" id="clearSelectedImageBtn" class="btn btn-outline-danger d-none">
+              Seçimi Temizle
+            </button>
+          </div>
+          <div id="selectedImagePreview" class="mt-2 d-none">
+            <img src="" alt="Seçilen resim" class="img-thumbnail" style="max-height: 200px;">
+            <div class="mt-1">
+              <small class="text-muted" id="selectedImageName"></small>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label class="form-label">Durum</label>
+            <select class="form-select" name="is_confirmed" required>
+              <option value="true" {{if eq .Invitation.IsConfirmed true}}selected{{end}}>
+                Aktif
+              </option>
+              <option value="false" {{if eq .Invitation.IsConfirmed false}}selected{{end}}>
+                Pasif
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end">
+          <a href="/panel/davetiyeler" class="btn btn-secondary me-2">İptal</a>
+          <button type="submit" class="btn btn-primary">
+            Güncelle
+          </button>
+        </div>
+      </div>
+      {{end}}
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="imageGalleryModal" tabindex="-1" aria-labelledby="imageGalleryModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="imageGalleryModalLabel">Görsel Seçin</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info">
+          <i class="bi bi-info-circle"></i> Önce kendi yüklediğiniz resimler, sonra şablon resimleri görüntülenir.
+        </div>
+
+        <div id="galleryGrid" class="row g-3"></div>
+
+        <div id="galleryEmpty" class="text-muted text-center d-none">
+          <i class="bi bi-image fs-1"></i>
+          <p class="mt-2">Henüz görsel bulunmuyor.</p>
+        </div>
+
+        <div id="galleryLoading" class="text-center d-none">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Yükleniyor...</span>
+          </div>
+          <p class="mt-2">Görseller yükleniyor...</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeGalleryBtn">Kapat</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/jquery-3.7.1.min.js"></script>
+<script src="/js/jquery.inputmask.min.js"></script>
+<link rel="stylesheet" href="/css/bootstrap-datepicker.min.css"/>
+<script src="/js/bootstrap-datepicker.min.js"></script>
+<script src="/js/bootstrap-datepicker.tr.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  $('#telephone').inputmask("09999999999");
+
+  // Konum bloğu (varsa) -------------------------
+  if (document.getElementById('locationRow')) {
+    const mapContainer = document.getElementById("mapContainer");
+    const mapFrame = document.getElementById("mapFrame");
+    const locationInput = document.getElementById("location");
+    const previewBtn = document.getElementById("previewLocationBtn");
+    const saveBtn = document.getElementById("saveLocationBtn");
+
+    previewBtn && previewBtn.addEventListener("click", function () {
+      const venue = (document.getElementById("venue_input").value || "").trim();
+      const address = (document.getElementById("address_input").value || "").trim();
+      if (!venue && !address) { alert("Lütfen konum için mekan adı veya adres giriniz!"); return; }
+      const query = encodeURIComponent(`${venue} ${address}`);
+      const embedUrl = `https://www.google.com/maps?q=${query}&output=embed`;
+      mapFrame.src = embedUrl;
+      mapContainer.classList.remove("d-none");
+    });
+
+    saveBtn && saveBtn.addEventListener("click", function () {
+      if (!mapFrame.src || !mapFrame.src.startsWith('https')) { alert("Önce konumu önizleyin."); return; }
+      locationInput.value = mapFrame.src;
+      saveBtn.classList.remove("btn-primary"); saveBtn.classList.add("btn-success"); saveBtn.innerText = "Kaydedildi";
+      setTimeout(() => { saveBtn.classList.add("btn-primary"); saveBtn.classList.remove("btn-success"); saveBtn.innerText = "Kaydet"; }, 1200);
+    });
+  }
+
+  // === Resim seçimi / önizleme -----------------
+  const imageInput        = document.getElementById('image');               // yok olabilir
+  const existingInput     = document.getElementById('existingImageInput');
+  const selectedPreview   = document.getElementById('selectedImagePreview');
+  const selectedImg       = selectedPreview ? selectedPreview.querySelector('img') : null;
+  const selectedImageName = document.getElementById('selectedImageName');
+  const clearBtn          = document.getElementById('clearSelectedImageBtn'); // yok olabilir
+
+  function normalizeExisting(val) {
+    if (!val) return '';
+    return val.startsWith('/') ? val : ('/uploads/invitations/' + val);
+  }
+
+  (function initPreview() {
+    if (!existingInput || !selectedPreview || !selectedImg) return;
+    const current = (existingInput.value || '').trim();
+    if (!current) return;
+    const url = normalizeExisting(current);
+    selectedImg.src = url;
+    selectedImageName && (selectedImageName.textContent = url.split('/').pop());
+    selectedPreview.classList.remove('d-none');
+    clearBtn && clearBtn.classList.remove('d-none');
+  })();
+
+  function showInlinePreview(url, nameText) {
+    if (!selectedPreview || !selectedImg) return;
+    selectedImg.src = url;
+    selectedImageName && (selectedImageName.textContent = nameText || (url.split('/').pop()));
+    selectedPreview.classList.remove('d-none');
+    clearBtn && clearBtn.classList.remove('d-none');
+  }
+
+  function clearSelection() {
+    existingInput && (existingInput.value = '');
+    imageInput && (imageInput.value = '');
+    selectedPreview && selectedPreview.classList.add('d-none');
+    clearBtn && clearBtn.classList.add('d-none');
+  }
+
+  clearBtn && clearBtn.addEventListener('click', clearSelection);
+
+  imageInput && imageInput.addEventListener('change', function(e) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Resim boyutu 2MB\'dan büyük olamaz!');
+      this.value = '';
+      return;
+    }
+    existingInput && (existingInput.value = '');
+    const tmpUrl = URL.createObjectURL(file);
+    showInlinePreview(tmpUrl, file.name);
+  });
+});
+</script>
+
+<script>
+$(function () {
+  $('#date').datepicker({
+    format: 'dd.mm.yyyy',
+    language: 'tr',
+    autoclose: true,
+    todayHighlight: true
+  });
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const CATEGORY_ID = '{{.Invitation.CategoryID}}';
+
+  const UPLOAD_BASE   = '/uploads/invitations/';
+  const TEMPLATE_BASE = '/images/templates/';
+
+  const openBtn           = document.getElementById('openImageGalleryBtn');
+  const clearBtn          = document.getElementById('clearSelectedImageBtn');
+  const existingInput     = document.getElementById('existingImageInput');
+  const fileInput         = document.getElementById('image');
+  const selectedPreview   = document.getElementById('selectedImagePreview');
+  const selectedImageName = document.getElementById('selectedImageName');
+
+  const galleryModalEl = document.getElementById('imageGalleryModal');
+  const galleryModal   = (window.bootstrap && galleryModalEl) ? new bootstrap.Modal(galleryModalEl, { focus:false }) : null;
+  const closeGalleryBtn = document.getElementById('closeGalleryBtn');
+
+  const grid    = document.getElementById('galleryGrid');
+  const empty   = document.getElementById('galleryEmpty');
+  const loading = document.getElementById('galleryLoading');
+
+  let lastFocusedElement = null;
+
+  function normalizeUrl(v) {
+    if (!v) return '';
+    const s = v.trim();
+    if (s.startsWith('http://') || s.startsWith('https://')) return s;
+    if (s.startsWith('/')) return s;
+    if (s.includes('templates/')) return TEMPLATE_BASE + s.replace(/^templates\//,'');
+    return UPLOAD_BASE + s;
+  }
+
+  function showInlinePreview(url, nameText) {
+    if (!selectedPreview) return;
+    const img = selectedPreview.querySelector('img');
+    if (!img) return;
+    img.src = url;
+    selectedImageName && (selectedImageName.textContent = nameText || url.split('/').pop());
+    selectedPreview.classList.remove('d-none');
+    clearBtn && clearBtn.classList.remove('d-none');
+  }
+
+  function setExistingImage(path) {
+    const full = normalizeUrl(path);
+    const abs  = full.startsWith('http') ? full : (location.origin + full);
+    existingInput && (existingInput.value = abs);
+    fileInput && (fileInput.value = '');
+    showInlinePreview(abs);
+  }
+
+  function clearSelectedImage() {
+    existingInput && (existingInput.value = '');
+    fileInput && (fileInput.value = '');
+    selectedPreview && selectedPreview.classList.add('d-none');
+    clearBtn && clearBtn.classList.add('d-none');
+  }
+
+  clearBtn && clearBtn.addEventListener('click', clearSelectedImage);
+
+  (function initExistingPreview() {
+    if (!existingInput || !existingInput.value) return;
+    const full = normalizeUrl(existingInput.value);
+    const abs  = full.startsWith('http') ? full : (location.origin + full);
+    showInlinePreview(abs);
+  })();
+
+  if (galleryModalEl && galleryModal) {
+    galleryModalEl.addEventListener('show.bs.modal', () => { lastFocusedElement = document.activeElement; galleryModalEl.removeAttribute('aria-hidden'); });
+    galleryModalEl.addEventListener('shown.bs.modal', () => { closeGalleryBtn && closeGalleryBtn.focus(); });
+    galleryModalEl.addEventListener('hide.bs.modal', () => { if (galleryModalEl.contains(document.activeElement)) { (openBtn || document.body).focus({ preventScroll:true }); } });
+    galleryModalEl.addEventListener('hidden.bs.modal', () => {
+      if (lastFocusedElement) setTimeout(() => lastFocusedElement.focus(), 50);
+      galleryModalEl.setAttribute('aria-hidden','true');
+      galleryModalEl.style.removeProperty('display');
+    });
+  }
+
+  openBtn && openBtn.addEventListener('click', async function() {
+    if (!grid || !empty || !loading || !galleryModal) return;
+    grid.innerHTML = '';
+    empty.classList.add('d-none');
+    loading.classList.remove('d-none');
+    galleryModal.show();
+
+    try {
+      const res = await fetch(`/panel/davetiyeler/images/${encodeURIComponent(CATEGORY_ID)}`);
+      const data = await res.json();
+      loading.classList.add('d-none');
+      if (!data.images || data.images.length === 0) { empty.classList.remove('d-none'); return; }
+
+      const userImages = [];
+      const templateImages = [];
+      data.images.forEach(imageUrl => {
+        if (typeof imageUrl !== 'string') return;
+        if (imageUrl.includes('/uploads/invitations/')) userImages.push(imageUrl);
+        else if (imageUrl.includes('/images/templates/')) templateImages.push(imageUrl);
+        else userImages.push(normalizeUrl(imageUrl));
+      });
+
+      if (userImages.length > 0) {
+        const userSec = document.createElement('div');
+        userSec.className = 'col-12';
+        userSec.innerHTML = `<h6 class="text-primary mb-3"><i class="bi bi-person-circle"></i> Kendi Yüklediğiniz Resimler</h6>`;
+        grid.appendChild(userSec);
+        userImages.forEach(url => createImageCard(url, 'Kullanıcı Resmi'));
+      }
+
+      if (templateImages.length > 0) {
+        const tplSec = document.createElement('div');
+        tplSec.className = 'col-12 mt-4';
+        tplSec.innerHTML = `<h6 class="text-success mb-3"><i class="bi bi-stars"></i> Şablon Resimleri</h6>`;
+        grid.appendChild(tplSec);
+        templateImages.forEach(url => createImageCard(url, 'Şablon Resmi'));
+      }
+
+    } catch(error) {
+      loading.classList.add('d-none');
+      empty.classList.remove('d-none');
+      empty.innerHTML = `<i class="bi bi-exclamation-triangle fs-1 text-warning"></i><p class="mt-2">Görseller yüklenirken hata oluştu.</p>`;
+    }
+  });
+
+  function createImageCard(imageUrl, type) {
+    if (!grid) return;
+    const fileName = imageUrl.split('/').pop();
+    const isUser = type === 'Kullanıcı Resmi';
+    const col = document.createElement('div');
+    col.className = 'col-6 col-sm-4 col-md-3 col-lg-2';
+    col.innerHTML = `
+      <div class="card h-100 shadow-sm" style="cursor:pointer; transition:.2s;" tabindex="0">
+        <div class="card-img-top position-relative">
+          <img src="${imageUrl}" class="card-img-top" alt="${fileName}" style="height:120px;object-fit:cover;">
+          <span class="position-absolute top-0 end-0 badge ${isUser ? 'bg-primary':'bg-success'} m-1">${isUser ? 'Kullanıcı':'Şablon'}</span>
+        </div>
+        <div class="card-body p-2">
+          <small class="text-truncate d-block" title="${fileName}">${fileName}</small>
+        </div>
+      </div>`;
+    const card = col.querySelector('.card');
+
+    function selectThis() {
+      setExistingImage(imageUrl);
+      const active = document.activeElement;
+      if (active && galleryModalEl && galleryModalEl.contains(active)) active.blur();
+      (openBtn || document.body).focus({ preventScroll:true });
+      galleryModal && requestAnimationFrame(() => galleryModal.hide());
+    }
+
+    col.addEventListener('click', selectThis);
+    card && card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectThis(); }
+    });
+    col.addEventListener('mouseenter', () => { if (card) card.style.transform='translateY(-2px)'; });
+    col.addEventListener('mouseleave', () => { if (card) card.style.transform='translateY(0)'; });
+
+    grid.appendChild(col);
+  }
+});
+</script>

@@ -1,0 +1,162 @@
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2 fw-bold">Katılımcı Listesi</h1>
+  <a href="/dashboard/invitations" class="btn btn-outline-primary">
+    <i class="bi bi-arrow-left"></i> Listeye Dön
+  </a>
+</div>
+
+<!-- Davet Bilgileri -->
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title mb-0">Davetiye Bilgileri</h5>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="mb-2">
+          <strong>Davet Adı:</strong> {{.Invitation.Category.Name}} Davetiyesi
+        </div>
+        <div class="mb-2">
+          <strong>Tarih:</strong> {{.Invitation.Date | FormatDate}}
+        </div>
+        <div class="mb-2">
+          <strong>Saat:</strong> {{.Invitation.Time}}
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="mb-2">
+          <strong>Toplam Katılımcı:</strong> 
+          <span class="badge bg-primary">{{.ParticipantCount}}</span>
+        </div>
+        <div class="mb-2">
+          <strong>Toplam Misafir:</strong> 
+          <span class="badge bg-success">{{.TotalGuests}}</span>
+        </div>
+        <div class="mb-2">
+          <strong>Durum:</strong> 
+          {{if .Invitation.IsConfirmed}}
+            <span class="badge bg-success">Aktif</span>
+          {{else}}
+            <span class="badge bg-secondary">Pasif</span>
+          {{end}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Katılımcı Listesi -->
+<div class="card">
+  <div class="card-header">
+    <h5 class="card-title mb-0">Katılımcı Listesi</h5>
+  </div>
+  <div class="card-body">
+    {{if .Participants}}
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Ad Soyad</th>
+            <th>Telefon Numarası</th>
+            <th>Misafir Sayısı</th>
+            <th>Oluşturulma Tarihi</th>
+            <th>İşlemler</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .Participants}}
+          <tr>
+            <td>{{.ID}}</td>
+            <td>{{.Name}}</td>
+            <td>{{.Telephone}}</td>
+            <td>
+              <span class="badge bg-primary">{{.ParticipantCount}}</span>
+            </td>
+            <td>{{.CreatedAt | FormatDate}}</td>
+            <td>
+                <form id="deleteForm-{{.ID}}" action="/dashboard/invitations/{{.ID}}/participants/delete" method="POST" class="d-inline flex-fill" style="margin:0;">
+                  <input type="hidden" name="_method" value="DELETE">
+                  {{if $.CsrfToken}}
+                  <input type="hidden" name="csrf_token" value="{{$.CsrfToken}}">
+                  {{end}}
+                  <button type="button" onclick="confirmDelete('{{.ID}}')" class="btn btn-sm btn-danger w-100" title="Sil">
+                    <i class="bi bi-trash3"></i> Sil
+                  </button>
+                </form>
+            </td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+    {{else}}
+    <div class="text-center text-muted py-4">
+      <i class="bi bi-people display-4"></i>
+      <p class="mt-3">Henüz katılımcı bulunmamaktadır.</p>
+    </div>
+    {{end}}
+  </div>
+</div>
+<script>
+  function confirmDelete(id) {
+    const formElement = document.getElementById(`deleteForm-${id}`);
+    const csrfTokenInput = formElement ? formElement.querySelector('input[name="csrf_token"]') : null;
+    const csrfToken = csrfTokenInput ? csrfTokenInput.value : null;
+
+    Swal.fire({
+      title: 'Emin misiniz?',
+      text: "Bu Katılımcıyı silmek istediğinize emin misiniz? Bu işlem geri alınamaz!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc3545',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Evet, sil!',
+      cancelButtonText: 'İptal',
+      customClass: {
+        confirmButton: 'btn btn-danger me-2',
+        cancelButton: 'btn btn-secondary'
+      },
+      buttonsStyling: false
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const url = `/dashboard/invitations/${id}/participants/delete`;
+        const headers = {
+          'Accept': 'application/json',
+        };
+
+        if (csrfToken) {
+          headers['X-CSRF-Token'] = csrfToken;
+        }
+
+        fetch(url, {
+          method: 'DELETE',
+          headers: headers
+        })
+          .then(response => {
+            if (!response.ok) {
+              return response.text().then(text => { throw new Error(text || `HTTP error! status: ${response.status}`) });
+            }
+            return response.json();
+          })
+          .then(() => {
+            Swal.fire(
+              'Silindi!',
+              'Katılımcı başarıyla silindi.',
+              'success'
+            ).then(() => {
+              window.location.reload();
+            });
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            Swal.fire(
+              'Hata!',
+              `Katılımcı silinirken bir hata oluştu: ${error.message}`,
+              'error'
+            );
+          });
+      }
+    });
+  }
+</script>

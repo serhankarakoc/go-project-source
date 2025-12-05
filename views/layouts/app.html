@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZATRANO - {{.Title}}</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="mobile-overlay"></div>
+
+    <nav id="sidebar" class="">
+        <div class="sidebar-header">
+            {{ if eq .User.UserTypeID 1 }}
+            <a href="/dashboard/home" class="logo">
+            {{ else }}
+            <a href="/panel/anasayfa" class="logo">
+            {{ end }}
+                <i class="fas fa-rocket logo-icon"></i>
+                <span class="logo-text">ZATRANO</span>
+            </a>
+        </div>
+
+        <ul class="list-unstyled components">
+            <li class="{{ if hasPrefix .Path "/dashboard/home" }}active{{ end }}">
+                {{ if eq .User.UserTypeID 1 }}
+                <a href="/dashboard/home"><i class="fas fa-home"></i> <span class="nav-link-text">Ana Sayfa</span></a>
+                {{ else }}
+                <a href="/panel/anasayfa"><i class="fas fa-home"></i> <span class="nav-link-text">Ana Sayfa</span></a>
+                {{ end }}
+            </li>
+            <li class="{{ if hasPrefix .Path "/dashboard/user-types" }}active{{ end }}">
+                <a href="/dashboard/user-types"><i class="fas fa-users"></i> <span class="nav-link-text">Kullanı Türleri</span></a>
+            </li>
+            <li class="{{ if hasPrefix .Path "/dashboard/users" }}active{{ end }}">
+                <a href="/dashboard/users"><i class="fas fa-users"></i> <span class="nav-link-text">Kullanıcılar</span></a>
+            </li>
+            <li>
+                <a href="#"><i class="fas fa-shopping-bag"></i> <span class="nav-link-text">Siparişler</span></a>
+            </li>
+            <li>
+                <a href="#"><i class="fas fa-chart-bar"></i> <span class="nav-link-text">Analitik</span></a>
+            </li>
+            <li>
+                <a href="#"><i class="fas fa-cog"></i> <span class="nav-link-text">Ayarlar</span></a>
+            </li>
+        </ul>
+    </nav>
+
+    <div id="content">
+        <header id="header">
+            <div class="header-left">
+                <button type="button" id="sidebarToggle" class="btn btn-light hamburger-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <div class="header-center">
+                <a href="#" class="header-logo">
+                    <i class="fas fa-rocket header-logo-icon"></i>
+                    <span class="header-logo-text">Zatrano</span>
+                </a>
+            </div>
+            
+            <div class="header-right">
+                <div class="dropdown">
+                    <div class="user-avatar" id="userDropdown" data-bs-toggle="dropdown">
+                        <i class="fas fa-circle-user"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="/auth/profile"><i class="fas fa-user me-2"></i> Profil</a></li>
+                        <li><a class="dropdown-item" href="/admin/settings"><i class="fas fa-cog me-2"></i> Ayarlar</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/auth/logout"><i class="fas fa-sign-out-alt me-2"></i> Çıkış</a></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <div class="container-fluid p-4 flex-grow-1">
+        {{embed}}
+        </div>
+
+        <footer id="footer">
+            <div class="container">
+                <p class="mb-0">&copy; {{ CurrentYear }} ZATRANO - Tüm hakları saklıdır.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="/js/script.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    {{if .Success}}
+    <script>
+      Swal.fire({
+        title: "Başarılı!",
+        text: `{{.Success | js}}`,
+        icon: "success",
+        timer: 2000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+      });
+    </script>
+    {{end}}
+
+    {{if .Error}}
+    <script>
+      Swal.fire({
+        title: "Hata!",
+        text: `{{.Error | js}}`,
+        icon: "error",
+        timerProgressBar: false,
+        showConfirmButton: true,
+      });
+    </script>
+    {{end}}
+</body>
+</html>

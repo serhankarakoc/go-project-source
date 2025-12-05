@@ -1,0 +1,431 @@
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2 fw-bold">{{.Title}}</h1>
+  <a href="/dashboard/invitations/create" class="btn btn-outline-primary d-flex align-items-center gap-2">
+    <i class="bi bi-plus-lg"></i> Yeni EKle
+  </a>
+</div>
+<div class="card card-glass mb-4">
+  <div class="card-body">
+    <form method="GET" action="/dashboard/invitations" class="mb-4">
+      <div class="table-responsive mb-0">
+        <table class="table table-modern align-middle mb-0">
+          <tbody>
+            <tr>
+              <td style="width:20%">
+                <input type="text" class="form-control" id="invitationKey" name="invitation_key" value="{{.Params.InvitationKey}}" placeholder="link">
+              </td>
+              <td style="width:15%">
+                <select class="form-select form-select-sm" id="categorySelect" name="category_id">
+                  <option value="">Kategori</option>
+                  {{range .Categories}}
+                  <option value="{{.ID}}" {{if eq $.Params.CategoryID .ID}}selected{{end}}>{{.Name}}</option>
+                  {{end}}
+                </select>
+              </td>
+              <td style="width:15%">
+                <select class="form-select form-select-sm" id="isConfirmedSelect" name="is_confirmed">
+                  <option value="">Yayın Durumu</option>
+                  <option value="true" {{if eq .Params.IsConfirmed "true"}}selected{{end}}>Yayında</option>
+                  <option value="false" {{if eq .Params.IsConfirmed "false"}}selected{{end}}>Yayında Değil</option>
+                </select>
+              </td>
+              <td style="width:15%">
+                <select class="form-select form-select-sm" id="isFreeSelect" name="is_free">
+                  <option value="">Ücret Durumu</option>
+                  <option value="true" {{if eq .Params.IsFree "true"}}selected{{end}}>Ücretsiz</option>
+                  <option value="false" {{if eq .Params.IsFree "false"}}selected{{end}}>Ücretli</option>
+                </select>
+              </td>
+              <td style="width:15%">
+                <select class="form-select form-select-sm" id="perPageSelect" name="perPage">
+                  <option value="20" {{if eq .Params.PerPage 20}}selected{{end}}>20</option>
+                  <option value="50" {{if eq .Params.PerPage 50}}selected{{end}}>50</option>
+                  <option value="100" {{if eq .Params.PerPage 100}}selected{{end}}>100</option>
+                </select>
+              </td>
+              <input type="hidden" name="sortBy" value="{{.Params.SortBy}}">
+              <input type="hidden" name="orderBy" value="{{.Params.OrderBy}}">
+              <td style="width:1%">
+                <button type="submit" class="btn btn-primary w-100 d-flex align-items-center gap-2">
+                  <i class="bi bi-search"></i> Filtrele
+                </button>
+              </td>
+              <td style="width:1%">
+                {{if or .Params.InvitationKey .Params.IsConfirmed .Params.IsFree (ne .Params.PerPage 20)}}
+                <a href="/dashboard/invitations?sortBy={{.Params.SortBy}}&orderBy={{.Params.OrderBy}}"
+                  class="btn btn-secondary w-100 d-flex align-items-center gap-2" title="Filtreleri Temizle">
+                  <i class="bi bi-eraser"></i> Temizle
+                </a>
+                {{end}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </form>
+    <div class="table-responsive">
+      <table class="table table-striped table-hover table-bordered align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            {{template "sortableHeader" dict "Label" "Key" "Field" "invitation_key" "CurrentParams" $.Params}}
+            {{template "sortableHeader" dict "Label" "Kategori" "Field" "category_id" "CurrentParams" $.Params}}
+            {{template "sortableHeader" dict "Label" "Tarih / Saat" "Field" "date" "CurrentParams" $.Params}}
+            {{template "sortableHeader" dict "Label" "Durumu" "Field" "is_confirmed" "CurrentParams" $.Params}}
+            {{template "sortableHeader" dict "Label" "Ücret" "Field" "is_free" "CurrentParams" $.Params}}
+            <th class="text-center fw-semibold" style="width: 1%; white-space: nowrap;">İşlemler</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{if .Result.Data}}
+          {{range .Result.Data}}
+          <tr>
+            <td>{{.InvitationKey}}</td>
+            <td>{{if .Category}}{{.Category.Name}}{{end}}</td>
+            <td><span class="text-muted small">{{ .Date | FormatDate }}{{if .Time}} {{.Time}}{{end}}</span></td>
+            <td class="text-center">
+              {{if .IsConfirmed}}
+                <span class="d-inline-flex flex-column align-items-center justify-content-center">
+                  <i class="bi bi-wifi text-success fs-4" title="Yayında"></i>
+                  <span class="text-success fw-semibold mt-1">Yayında</span>
+                </span>
+              {{else}}
+                <span class="d-inline-flex flex-column align-items-center justify-content-center">
+                  <i class="bi bi-wifi text-danger fs-4" title="Yayında Değil"></i>
+                  <span class="text-danger fw-semibold mt-1">Yayında Değil</span>
+                </span>
+              {{end}}
+            </td>
+            <td class="text-center">
+              {{if .IsFree}}
+                <span class="badge bg-secondary">Ücretsiz</span>
+              {{else}}
+                <span class="badge bg-warning text-dark">Ücretli</span>
+              {{end}}
+            </td>
+            <td class="text-end align-middle" style="white-space: nowrap;">
+              <div class="d-flex flex-row gap-1 justify-content-end" style="min-width: 220px;">
+                <a href="/dashboard/invitations/show/{{.ID}}" target="_blank" class="btn btn-primary btn-sm flex-fill" title="İncele">
+                  <i class="bi bi-eye-fill"></i> İncele
+                </a>
+                <a href="/dashboard/invitations/update/{{.ID}}" class="btn btn-warning btn-sm flex-fill" title="Düzenle">
+                  <i class="bi bi-pencil-square"></i> Düzenle
+                </a>
+                <form id="deleteForm-{{.ID}}" action="/dashboard/invitations/delete/{{.ID}}" method="POST" class="d-inline flex-fill" style="margin:0;">
+                  <input type="hidden" name="_method" value="DELETE">
+                  {{if $.CsrfToken}}
+                  <input type="hidden" name="csrf_token" value="{{$.CsrfToken}}">
+                  {{end}}
+                  <button type="button" onclick="confirmDelete('{{.ID}}')" class="btn btn-sm btn-danger w-100" title="Sil">
+                    <i class="bi bi-trash3"></i> Sil
+                  </button>
+                </form>
+              </div>
+              <div class="d-flex flex-column gap-2 mt-1" style="min-width: 220px;">
+                {{if .IsConfirmed}}
+                  <form action="/dashboard/invitations/unpublish/{{.ID}}" method="POST" style="margin:0;">
+                    <input type="hidden" name="_method" value="POST">
+                    {{if $.CsrfToken}}
+                    <input type="hidden" name="csrf_token" value="{{$.CsrfToken}}">
+                    {{end}}
+                    <button type="submit" class="btn btn-danger btn-sm w-100" title="Yayından Kaldır">
+                      <i class="bi bi-eye-slash"></i> Yayından Kaldır
+                    </button>
+                  </form>
+                  <button type="button" id="shareButton" data-invitation-key="{{.InvitationKey}}" class="btn btn-primary btn-sm w-100" title="Paylaş">
+                    <i class="bi bi-share"></i> Paylaş
+                  </button>
+                  {{if .IsParticipant}}
+                  <a href="/dashboard/invitations/{{.ID}}/participants" class="btn btn-success btn-sm w-100" title="Katılımcı Raporu">
+                    <i class="bi bi-file-earmark-text"></i> Katılımcı Raporu
+                  </a>
+                  {{end}}
+                {{else}}
+                  <form action="/dashboard/invitations/publish/{{.ID}}" method="POST" style="margin:0;">
+                    <input type="hidden" name="_method" value="POST">
+                    {{if $.CsrfToken}}
+                    <input type="hidden" name="csrf_token" value="{{$.CsrfToken}}">
+                    {{end}}
+                    <button type="submit" class="btn btn-success btn-sm w-100" title="Yayına Al">
+                      <i class="bi bi-eye-fill"></i> Yayına Al
+                    </button>
+                  </form>
+                {{end}}
+              </div>
+            </td>
+          </tr>
+          {{end}}
+          {{else}}
+          <tr>
+            <td colspan="6" class="text-center py-4">
+              <div class="text-muted">Gösterilecek kayıt bulunamadı. Filtreleri temizlemeyi deneyin.</div>
+            </td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+    <div class="table-footer bg-light border-top rounded-bottom px-3 py-2 mt-0">
+      {{if gt .Result.Meta.TotalItems 0}}
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+        <div class="text-muted small">
+          Toplam {{.Result.Meta.TotalItems}} kayıttan {{if .Result.Data}}{{ Add (Mul (Subtract .Result.Meta.CurrentPage 1) .Result.Meta.PerPage) 1 }}{{else}}0{{end}} - {{ Add (Mul (Subtract .Result.Meta.CurrentPage 1) .Result.Meta.PerPage) (len .Result.Data) }} arası gösteriliyor. ({{.Result.Meta.TotalPages}} sayfa)
+        </div>
+        {{if gt .Result.Meta.TotalPages 1}}
+          {{template "pagination" dict "Meta" .Result.Meta "Params" .Params}}
+        {{end}}
+      </div>
+      {{else}}
+      <div class="text-muted small text-center">
+        Kayıt bulunamadı.
+      </div>
+      {{end}}
+    </div>
+  </div>
+</div>
+<!-- Paylaş Modal (tablonun dışında, sayfa sonunda) -->
+<div id="shareModal" class="shareModal position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-dark bg-opacity-50 d-none" style="z-index: 1050;">
+  <div class="bg-white rounded-4 shadow-lg p-4 position-relative w-100" style="max-width: 400px; min-width: 320px;">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h2 class="h5 fw-bold flex-grow-1 text-center mb-0">Davetiyenizi Paylaşın</h2>
+      <button type="button" onclick="closeModal()" class="btn-close ms-2" aria-label="Kapat"></button>
+    </div>
+    <p class="fw-semibold mb-2">Davetiye Linki:</p>
+    <div class="input-group mb-3">
+      <input type="text" id="invitationLinkInput" class="form-control invitationLink" value="" readonly>
+      <button class="btn btn-primary copyLinkButton" type="button"><i class="bi bi-clipboard"></i> Kopyala</button>
+    </div>
+    <div class="d-grid gap-2">
+      <button class="btn btn-success sendWhatsappMessage" type="button"><i class="bi bi-whatsapp"></i> WhatsApp'a Gönder</button>
+      <button class="btn btn-primary shareFacebook" type="button"><i class="bi bi-facebook"></i> Facebook'ta Paylaş</button>
+      <button class="btn btn-info text-white shareTwitter" type="button"><i class="bi bi-twitter"></i> Twitter'da Paylaş</button>
+    </div>
+  </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Paylaş butonuna tıklanınca modalı aç ve linki doldur
+  document.querySelectorAll('#shareButton').forEach(button => {
+    button.addEventListener('click', function () {
+      const key = button.getAttribute('data-invitation-key');
+      const modal = document.getElementById('shareModal');
+      const linkInput = document.getElementById('invitationLinkInput');
+      if (modal && linkInput) {
+        linkInput.value = 'https://zatrano/' + key;
+        modal.classList.remove('d-none');
+        // Modal dışında bir yere tıklanınca kapat
+        setTimeout(() => {
+          modal.addEventListener('mousedown', function handler(e) {
+            if (e.target === modal) {
+              modal.classList.add('d-none');
+              modal.removeEventListener('mousedown', handler);
+            }
+          });
+        }, 10);
+        // ESC ile kapat
+        function escHandler(e) {
+          if (e.key === 'Escape') {
+            modal.classList.add('d-none');
+            document.removeEventListener('keydown', escHandler);
+          }
+        }
+        document.addEventListener('keydown', escHandler);
+      }
+    });
+  });
+
+  // Modalı kapatma işlevi
+  window.closeModal = function () {
+    const modal = document.getElementById('shareModal');
+    if (modal) modal.classList.add('d-none');
+  };
+
+  // Paylaşım butonlarının işlevleri
+  document.querySelectorAll('.copyLinkButton').forEach(button => {
+    button.addEventListener('click', function () {
+      const linkInput = document.getElementById('invitationLinkInput');
+      if (linkInput) {
+        linkInput.select();
+        document.execCommand('copy');
+        alert('Link kopyalandı: ' + linkInput.value);
+      }
+    });
+  });
+
+  document.querySelectorAll('.sendWhatsappMessage').forEach(button => {
+    button.addEventListener('click', function () {
+      const linkInput = document.getElementById('invitationLinkInput');
+      if (linkInput) {
+        const invitationLink = linkInput.value;
+        const whatsappMessage = encodeURIComponent(invitationLink);
+        const whatsappUrl = 'https://wa.me/?text=' + whatsappMessage;
+        window.open(whatsappUrl, '_blank');
+      }
+    });
+  });
+
+  document.querySelectorAll('.shareFacebook').forEach(button => {
+    button.addEventListener('click', function () {
+      const linkInput = document.getElementById('invitationLinkInput');
+      if (linkInput) {
+        const shareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(linkInput.value);
+        window.open(shareUrl, '_blank');
+      }
+    });
+  });
+
+  document.querySelectorAll('.shareTwitter').forEach(button => {
+    button.addEventListener('click', function () {
+      const linkInput = document.getElementById('invitationLinkInput');
+      if (linkInput) {
+        const shareUrl = 'https://twitter.com/intent/tweet?url=' + encodeURIComponent(linkInput.value);
+        window.open(shareUrl, '_blank');
+      }
+    });
+  });
+});
+</script>
+
+{{define "sortableHeader"}}
+{{ $currentSortBy := .CurrentParams.SortBy }}
+{{ $currentOrderBy := .CurrentParams.OrderBy }}
+{{ $field := .Field }}
+{{ $label := .Label }}
+{{ $newOrderBy := "asc" }}
+{{ $icon := "bi-arrow-down-up text-muted" }}
+
+{{if eq $currentSortBy $field}}
+{{if eq $currentOrderBy "asc"}}
+{{ $newOrderBy = "desc" }}
+{{ $icon = "bi-sort-up text-primary" }}
+{{else}}
+{{ $newOrderBy = "asc" }}
+{{ $icon = "bi-sort-down text-primary" }}
+{{end}}
+{{end}}
+<th>
+  <a href="?sortBy={{$field}}&orderBy={{$newOrderBy}}" class="text-decoration-none text-dark">
+    {{$label}} <i class="bi {{$icon}}"></i>
+  </a>
+</th>
+{{end}}
+
+{{define "pagination"}}
+{{ $meta := .Meta }}
+{{ $params := .Params }}
+<nav aria-label="Sayfalama">
+  <ul class="pagination pagination-modern pagination-sm mb-0 gap-1">
+    <li class="page-item {{if eq $meta.CurrentPage 1}}disabled{{end}}">
+      <a class="page-link rounded-circle d-flex align-items-center justify-content-center"
+        href="{{if gt $meta.CurrentPage 1}}?page={{$meta.CurrentPage | Subtract 1}}&perPage={{$params.PerPage}}&sortBy={{$params.SortBy}}&orderBy={{$params.OrderBy}}&name={{$params.Name | urlquery}}{{else}}#{{end}}"
+        aria-label="Önceki">
+        <i class="bi bi-chevron-left"></i>
+      </a>
+    </li>
+    {{ $totalPages := $meta.TotalPages }}
+    {{ $currentPage := $meta.CurrentPage }}
+    {{ $window := 2 }}
+    {{ $showFirst := false }}{{ $showLast := false }}
+    {{ $startPage := 1 }}{{ $endPage := $totalPages }}
+    {{if gt $totalPages (Add (Mul $window 2) 3)}}
+      {{ $startPage = Max 1 (Subtract $currentPage $window) }}
+      {{ $endPage = Min $totalPages (Add $currentPage $window) }}
+      {{if gt $startPage 1}} {{ $showFirst = true }} {{end}}
+      {{if lt $endPage $totalPages}} {{ $showLast = true }} {{end}}
+      {{if eq $startPage 1}}
+        {{ $endPage = Min $totalPages (Add $startPage (Mul $window 2)) }}
+      {{end}}
+      {{if eq $endPage $totalPages}}
+        {{ $startPage = Max 1 (Subtract $endPage (Mul $window 2)) }}
+      {{end}}
+      {{if gt $startPage 1}} {{ $showFirst = true }} {{end}}
+      {{if lt $endPage $totalPages}} {{ $showLast = true }} {{end}}
+    {{end}}
+    {{if $showFirst}}
+      <li class="page-item"><a class="page-link rounded-circle d-flex align-items-center justify-content-center" href="?page=1&perPage={{$params.PerPage}}&sortBy={{$params.SortBy}}&orderBy={{$params.OrderBy}}&name={{$params.Name | urlquery}}">1</a></li>
+      {{if gt $startPage 2}}
+        <li class="page-item disabled"><span class="page-link bg-transparent border-0">...</span></li>
+      {{end}}
+    {{end}}
+    {{range $i := Iterate $startPage $endPage}}
+      <li class="page-item {{if eq $i $currentPage}}active{{end}}">
+        <a class="page-link rounded-circle d-flex align-items-center justify-content-center" href="?page={{$i}}&perPage={{$params.PerPage}}&sortBy={{$params.SortBy}}&orderBy={{$params.OrderBy}}&name={{$params.Name | urlquery}}">{{$i}}</a>
+      </li>
+    {{end}}
+    {{if $showLast}}
+      {{if lt $endPage (Subtract $totalPages 1)}}
+        <li class="page-item disabled"><span class="page-link bg-transparent border-0">...</span></li>
+      {{end}}
+      <li class="page-item"><a class="page-link rounded-circle d-flex align-items-center justify-content-center" href="?page={{$totalPages}}&perPage={{$params.PerPage}}&sortBy={{$params.SortBy}}&orderBy={{$params.OrderBy}}&name={{$params.Name | urlquery}}">{{$totalPages}}</a></li>
+    {{end}}
+    <li class="page-item {{if eq $meta.CurrentPage $totalPages}}disabled{{end}}">
+      <a class="page-link rounded-circle d-flex align-items-center justify-content-center"
+        href="{{if lt $meta.CurrentPage $totalPages}}?page={{$meta.CurrentPage | Add 1}}&perPage={{$params.PerPage}}&sortBy={{$params.SortBy}}&orderBy={{$params.OrderBy}}&name={{$params.Name | urlquery}}{{else}}#{{end}}"
+        aria-label="Sonraki">
+        <i class="bi bi-chevron-right"></i>
+      </a>
+    </li>
+  </ul>
+</nav>
+{{end}}
+<script>
+  function confirmDelete(id) {
+    const formElement = document.getElementById(`deleteForm-${id}`);
+    const csrfTokenInput = formElement ? formElement.querySelector('input[name="csrf_token"]') : null;
+    const csrfToken = csrfTokenInput ? csrfTokenInput.value : null;
+
+    Swal.fire({
+      title: 'Emin misiniz?',
+      text: "Bu Davetiyeyi silmek istediğinize emin misiniz? Bu işlem geri alınamaz!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc3545',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Evet, sil!',
+      cancelButtonText: 'İptal',
+      customClass: {
+        confirmButton: 'btn btn-danger me-2',
+        cancelButton: 'btn btn-secondary'
+      },
+      buttonsStyling: false
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const url = `/dashboard/invitations/delete/${id}`;
+        const headers = {
+          'Accept': 'application/json',
+        };
+
+        if (csrfToken) {
+          headers['X-CSRF-Token'] = csrfToken;
+        }
+
+        fetch(url, {
+          method: 'DELETE',
+          headers: headers
+        })
+          .then(response => {
+            if (!response.ok) {
+              return response.text().then(text => { throw new Error(text || `HTTP error! status: ${response.status}`) });
+            }
+            return response.json();
+          })
+          .then(() => {
+            Swal.fire(
+              'Silindi!',
+              'Davetiye başarıyla silindi.',
+              'success'
+            ).then(() => {
+              window.location.reload();
+            });
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            Swal.fire(
+              'Hata!',
+              `Davetiye silinirken bir hata oluştu: ${error.message}`,
+              'error'
+            );
+          });
+      }
+    });
+  }
+</script>

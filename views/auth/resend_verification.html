@@ -1,0 +1,40 @@
+<div class="auth-body">
+    <form method="POST" action="/auth/resend-verification">
+        <input type="hidden" name="csrf_token" value="{{ .CsrfToken }}">
+        
+        <div class="form-group">
+            <label class="form-label" for="email">E-posta Adresiniz</label>
+            <div class="input-group">
+                <div class="input-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <input type="email" 
+                       class="form-control" 
+                       id="email" 
+                       name="email" 
+                       value="{{if .Email}}{{.Email}}{{end}}"
+                       placeholder="ornek@email.com" 
+                       required>
+            </div>
+            <small class="form-text text-muted">
+                Doğrulama linkini almak için kayıtlı e-posta adresinizi girin.
+            </small>
+        </div>
+
+        <button type="submit" class="btn-auth">
+            <i class="fas fa-paper-plane me-2"></i>Doğrulama Linkini Gönder
+        </button>
+    </form>
+
+    <div class="auth-footer mt-3">
+        <p class="auth-helper-text">
+            Doğrulama linkini aldınız mı? 
+            <a href="/auth/login" class="link auth-link-small">Giriş Yapın</a>
+        </p>
+        
+        <p class="auth-helper-text">
+            Hesabınız yok mu? 
+            <a href="/auth/register" class="link auth-link-small">Kayıt Olun</a>
+        </p>
+    </div>
+</div>

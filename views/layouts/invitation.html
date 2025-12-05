@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="zatrano" />
+    <meta name="description" content="{{ .Invitation.Category.Name }} Davetiyesi" />
+    <title>
+        {{if eq .Invitation.Category.Template "title"}} {{ .Invitation.InvitationDetail.Title }} | {{ .Invitation.Category.Name }} Davetiyesi {{else if eq .Invitation.Category.Template "online"}} {{ .Invitation.InvitationDetail.Title }} | {{ .Invitation.Category.Name
+        }} Davetiyesi {{else if eq .Invitation.Category.Template "person"}} {{ .Invitation.InvitationDetail.Person }} | {{ .Invitation.Category.Name }} Davetiyesi {{else if eq .Invitation.Category.Template "person-family"}} {{ .Invitation.InvitationDetail.Person
+        }} | {{ .Invitation.Category.Name }} Davetiyesi {{else if eq .Invitation.Category.Template "wedding"}} {{ .Invitation.InvitationDetail.BrideName }} & {{ .Invitation.InvitationDetail.GroomName }} | {{ .Invitation.Category.Name }} Davetiyesi {{end}}
+    </title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Philosopher:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Courgette&family=Quicksand:wght@300..700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/invitation.css" />
+    <link rel="stylesheet" href="/css/calendar.css" />
+    {{if .Invitation.IsFree}}
+    test
+    {{end}}
+</head>
+
+<body>
+    <div class="container" style="background-image: url('{{ .Invitation.Image }}');">
+        <div id="invitationDetail" class="glass p-2 rounded-lg mobile-content flex-shrink-0 flex flex-col items-center justify-center" style="flex-grow: 1">
+            {{embed}}
+            <div id="details" class="content-item text-white">
+                <div class="text-center">
+                    {{if ne .Invitation.Category.Template "online"}}
+                    <p id="venue" class="font-bold">{{ .Invitation.Venue }}</p>
+                    <p id="address">{{ .Invitation.Address }}</p>
+                    {{end}}
+                    <p id="datetime" class="font-bold">
+                        {{ .Invitation.Date|FormatDate }}, {{ .Invitation.Time }}
+                    </p>
+                </div>
+            </div>
+            {{if .Invitation.Note}}
+            <div id="note" class="content-item text-white font-bold">
+                "{{ .Invitation.Note }}"
+            </div>
+            {{end}}
+        </div>
+        <div class="spacer"></div>
+        <div id="counter" class="glass p-2 rounded-lg no-margin-bottom flex-shrink-0 flex items-center justify-center" style="flex-grow: 0">
+            <p id="countdown" class="text-white font-bold"></p>
+        </div>
+        <div class="spacer"></div>
+        <div id="buttons" class="buttons-container rounded-lg flex-shrink-0">
+            <div class="button-row">
+                <button onclick="window.location.href='tel:{{ .Invitation.Telephone }}'" class="glass p-2 rounded-md text-white flex items-center justify-center whitespace-nowrap">
+                    <i class="fas fa-phone-alt mr-1"></i>Ara
+                </button>
+                <button id="addCalendar" class="glass p-2 rounded-md text-white flex items-center justify-center whitespace-nowrap">
+                    <i class="fas fa-calendar-plus mr-1"></i>Takvime Ekle
+                </button>
+                {{if eq .Invitation.Category.Template "online"}}
+                <button onclick="window.open('{{ .Invitation.Link }}', '_blank')" class="glass p-2 rounded-md text-white flex items-center justify-center whitespace-nowrap">
+                    <i class="fas fa-link mr-1"></i>Link
+                </button>
+                {{else}}
+                <button onclick="openModal('locationModal')" class="glass p-2 rounded-md text-white flex items-center justify-center whitespace-nowrap">
+                    <i class="fas fa-map-marker-alt mr-1"></i>Konum
+                </button>
+                {{end}}
+            </div>
+            {{if and .Invitation.IsParticipant (not .Invitation.IsFree)}}
+            <button onclick="openModal('participantModal')" id="openModalBtn" class="glass p-2 rounded-md text-white flex items-center justify-center whitespace-nowrap full-width-button">
+                <i class="fas fa-check-circle mr-1"></i>Katılım Bildir
+            </button>
+            {{end}}
+            {{if .Invitation.IsFree}}
+            <button onclick="window.location.href='https://zatrano'" id="createInvitation" class="glass p-2 rounded-md text-white flex items-center justify-center whitespace-nowrap full-width-button">
+                <i class="fas fa-plus-circle mr-1"></i>Davetiye Oluştur
+            </button>
+            {{end}}
+        </div>
+    </div>
+    <div id="locationModal" class="map-modal-container">
+        <div class="map-modal-content">
+            <button class="map-modal-close">Kapat</button>
+            <iframe src="{{ .Invitation.Location }}" loading="lazy"></iframe>
+        </div>
+    </div>
+    {{if and .Invitation.IsParticipant (not .Invitation.IsFree)}}
+    <div id="participantModal" class="form-modal-container">
+        <div class="form-modal-content">
+            <div class="form-modal-header">
+                <h3>Katılımcı Bilgi Formu</h3>
+                <button class="form-close-modal">&times;</button>
+            </div>
+            <div class="form-modal-body">
+                <form id="participantForm" method="POST" action="/{{ .Invitation.InvitationKey }}/katilimci-olustur">
+                    <input type="hidden" name="csrf_token" value="{{ .CsrfToken }}" />
+                    <label for="name">Ad Soyad:</label>
+                    <input type="text" id="name" name="name" pattern="^([a-zA-ZÇçĞğİıÖöŞşÜü]{2,}\s[a-zA-ZÇçĞğİıÖöŞşÜü]{1,}'?-?[a-zA-ZÇçĞğİıÖöŞşÜü]{1,}\s?([a-zA-ZÇçĞğİıÖöŞşÜü]{1,})?)" title="Lütfen Ad Soyad Giriniz." required />
+                    <label for="telephone">Telefon:</label>
+                    <input type="text" id="telephone" name="telephone" required /> {{if .Invitation.IsMultipleParticipant}}
+                    <input type="hidden" id="participant_count" name="participant_count" value="1" required /> {{else}}
+                    <label for="participant_count">Katılımcı Sayısı:</label>
+                    <input type="number" id="participant_count" name="participant_count" min="1" required /> {{end}}
+                </form>
+            </div>
+            <div class="form-modal-footer">
+                <button type="submit" form="participantForm" id="saveButton" class="form-submit-button">
+                    <i class="fas fa-paper-plane"></i> Gönder
+                </button>
+            </div>
+        </div>
+    </div>
+    {{end}}
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/jquery.inputmask.min.js"></script>
+    <script>
+        document.querySelectorAll("form").forEach((form) => {
+            form.addEventListener("submit", function () {
+              document.getElementById("saveButton").style.display = "none";
+            });
+          });
+          const targetDate = new Date(
+            '{{ .Invitation.Date.Format "2006-01-02" }} {{ .Invitation.Time }}'
+          ).getTime();
+          function updateCountdown() {
+            const currentDate = new Date().getTime();
+            const timeLeft = targetDate - currentDate;
+            if (timeLeft <= 0) {
+              document.getElementById("countdown").innerHTML = "Süre doldu!";
+            } else {
+              const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+              const hours = Math.floor(
+                (timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+              );
+              const minutes = Math.floor(
+                (timeLeft % (1000 * 60 * 60)) / (1000 * 60)
+              );
+              const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+              document.getElementById(
+                "countdown"
+              ).innerHTML = `${days} Gün ${hours} Saat ${minutes} Dakika ${seconds} Saniye`;
+            }
+          }
+          setInterval(updateCountdown, 1000);
+          window.onload = updateCountdown;
+          document.querySelectorAll(".map-modal-close").forEach((button) => {
+            button.addEventListener("click", () => {
+              button.closest(".map-modal-container").style.display = "none";
+            });
+          });
+          document.querySelectorAll(".form-close-modal").forEach((button) => {
+            button.addEventListener("click", () => {
+              button.closest(".form-modal-container").style.display = "none";
+            });
+          });
+          function openModal(modalId) {
+            document.getElementById(modalId).style.display = "flex";
+          }
+          var success = "{{ .Success }}";
+          if (success != "") {
+            Swal.fire({
+              title: "{{ .Success }}",
+              icon: "success",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          }
+          var error = "{{ .Error }}";
+          if (error != "") {
+            Swal.fire({
+              title: "{{ .Error }}",
+              icon: "error",
+              showConfirmButton: true,
+              confirmButtonText: "Tamam",
+            });
+          }
+          $("#telephone").inputmask("09999999999");
+    </script>
+    <script>
+        (()=> {
+          var templateKey = "{{ .Invitation.Category.Template }}";
+          var categoryName = "{{ .Invitation.Category.Name }}";
+          var key = "{{ .Invitation.InvitationKey }}";
+          var dateYMD = "{{ .Invitation.Date.Format "2006-01-02" }}";
+          var timeHM = "{{ .Invitation.Time }}";
+          var locationText = "{{ .Invitation.Location }}";
+          var titleTxt = "{{ .Invitation.InvitationDetail.Title }}";
+          var personTxt = "{{ .Invitation.InvitationDetail.Person }}";
+          var bride = "{{ .Invitation.InvitationDetail.BrideName }}";
+          var groom = "{{ .Invitation.InvitationDetail.GroomName }}";
+        
+          var eventName = "Davetiye";
+          switch (templateKey) {
+            case "title":
+            case "online":
+              eventName = (titleTxt ? (titleTxt + " | " + categoryName + " Davetiyesi") : ("Davetiye | " + categoryName));
+              break;
+            case "person":
+            case "person-family":
+              eventName = (personTxt ? (personTxt + " | " + categoryName + " Davetiyesi") : ("Davetiye | " + categoryName));
+              break;
+            case "wedding":
+              eventName = ((bride||"") + " & " + (groom||"")).trim() + " | " + categoryName + " Davetiyesi";
+              break;
+          }
+        
+          var inviteUrl = "https://zatrano/" + key;
+          var description = "Davetiye:[br]→ [url]" + inviteUrl;
+        
+          var startISOlocal = dateYMD + "T" + (timeHM && timeHM.length<=5 ? (timeHM + ":00") : timeHM);
+          var endISOlocal   = dateYMD + "T23:59:00";
+        
+          var btn = document.getElementById('addCalendar');
+          if (btn) {
+            btn.dataset.title = eventName;
+            btn.dataset.start = startISOlocal;
+            btn.dataset.end = endISOlocal;
+            btn.dataset.location = locationText || "";
+            btn.dataset.description = description;
+            btn.dataset.url = inviteUrl;
+          }
+        
+          const $ = (s, el=document) => el.querySelector(s);
+          const escNL = s => (s||"").replace(/\r?\n/g,"\\n");
+          const toZ = dt => {
+            const d = new Date(dt);
+            return d.getUTCFullYear()
+              + String(d.getUTCMonth()+1).padStart(2,'0')
+              + String(d.getUTCDate()).padStart(2,'0')
+              + "T"
+              + String(d.getUTCHours()).padStart(2,'0')
+              + String(d.getUTCMinutes()).padStart(2,'0')
+              + String(d.getUTCSeconds()).padStart(2,'0') + "Z";
+          };
+        
+          function buildLinks(ev){
+            const start = new Date(ev.start);
+            const end   = new Date(ev.end);
+        
+            const dates = `${toZ(start)}/${toZ(end)}`;
+            const gcal = "https://calendar.google.com/calendar/render"
+              + `?action=TEMPLATE`
+              + `&text=${encodeURIComponent(ev.title)}`
+              + `&dates=${encodeURIComponent(dates)}`
+              + `&location=${encodeURIComponent(ev.location||"")}`
+              + `&details=${encodeURIComponent(ev.description||"")}`;
+        
+            const outlookWeb = "https://outlook.live.com/calendar/0/deeplink/compose"
+              + `?subject=${encodeURIComponent(ev.title)}`
+              + `&body=${encodeURIComponent(ev.description||"")}`
+              + `&location=${encodeURIComponent(ev.location||"")}`
+              + `&startdt=${encodeURIComponent(start.toISOString())}`
+              + `&enddt=${encodeURIComponent(end.toISOString())}`;
+        
+            const uid = (crypto.randomUUID && crypto.randomUUID()) || (Date.now()+"@zatrano");
+            const nowZ = toZ(new Date());
+            const ics =
+        `BEGIN:VCALENDAR
+        VERSION:2.0
+        PRODID:-//zatrano//AddToCalendar//TR
+        CALSCALE:GREGORIAN
+        METHOD:PUBLISH
+        BEGIN:VEVENT
+        UID:${uid}
+        DTSTAMP:${nowZ}
+        DTSTART:${toZ(start)}
+        DTEND:${toZ(end)}
+        SUMMARY:${ev.title}
+        DESCRIPTION:${escNL(ev.description||"")}
+        LOCATION:${ev.location||""}
+        URL:${ev.url||""}
+        END:VEVENT
+        END:VCALENDAR`.replace(/\n/g,"\r\n");
+        
+            const blob = new Blob([ics], {type:"text/calendar;charset=utf-8"});
+            const icsURL = URL.createObjectURL(blob);
+        
+            return { gcal, outlookWeb, icsURL };
+          }
+        
+          function ensureModal(){
+            if ($('#atc-overlay')) return $('#atc-overlay');
+            const wrap = document.createElement('div');
+            wrap.className = 'atc-overlay';
+            wrap.id = 'atc-overlay';
+        wrap.innerHTML = `
+          <div class="atc-modal" role="dialog" aria-modal="true" aria-labelledby="atc-title">
+            <header>
+              <h3 id="atc-title">Takvime Ekle</h3>
+              <button class="atc-x" id="atc-close" aria-label="Kapat">
+                <i class="fas fa-times text-white text-xl"></i>
+              </button>
+            </header>
+            <div class="atc-grid">
+              <a class="atc-item" id="atc-apple" href="#" download="event.ics" rel="noopener">
+                <i class="fab fa-apple text-white text-xl"></i>
+                <div>
+                  <div class="lbl">Apple Calendar</div>
+                  <div class="text-xs opacity-70">iOS & macOS (.ics)</div>
+                </div>
+              </a>
+              <a class="atc-item" id="atc-google" href="#" target="_blank" rel="noopener">
+                <i class="fab fa-google text-white text-xl"></i>
+                <div>
+                  <div class="lbl">Google Calendar</div>
+                  <div class="text-xs opacity-70">Web’de oluştur</div>
+                </div>
+              </a>
+              <a class="atc-item" id="atc-ics" href="#" download="event.ics" rel="noopener">
+                <i class="fas fa-calendar-alt text-white text-xl"></i>
+                <div>
+                  <div class="lbl">iCal Dosyası</div>
+                  <div class="text-xs opacity-70">Apple / Outlook / Diğer</div>
+                </div>
+              </a>
+              <a class="atc-item" id="atc-outlook" href="#" target="_blank" rel="noopener">
+                <i class="fab fa-windows text-white text-xl"></i>
+                <div>
+                  <div class="lbl">Outlook.com</div>
+                  <div class="text-xs opacity-70">Web’de oluştur</div>
+                </div>
+              </a>
+            </div>
+          </div>`;
+        
+            document.body.appendChild(wrap);
+        
+            const close = $('#atc-close', wrap);
+            function closeModal(){ wrap.classList.remove('open'); document.removeEventListener('keydown', onEsc); }
+            function onEsc(e){ if(e.key==='Escape') closeModal(); }
+            wrap.addEventListener('click', e => { if(e.target===wrap) closeModal(); });
+            close.addEventListener('click', closeModal);
+        
+            return wrap;
+          }
+        
+          function parseEventFromButton(btn){
+            return {
+              title: btn.dataset.title || document.title || 'Etkinlik',
+              start: btn.dataset.start,
+              end:   btn.dataset.end,
+              location: btn.dataset.location || '',
+              description: btn.dataset.description || '',
+              url: btn.dataset.url || location.href
+            };
+          }
+        
+          function openForButton(btn){
+            const overlay = ensureModal();
+            const ev = parseEventFromButton(btn);
+            const links = buildLinks(ev);
+            $('#atc-google',  overlay).href = links.gcal;
+            $('#atc-outlook', overlay).href = links.outlookWeb;
+            $('#atc-ics',     overlay).href = links.icsURL;
+            $('#atc-apple',   overlay).href = links.icsURL;
+            overlay.classList.add('open');
+            document.addEventListener('keydown', e => { if(e.key==='Escape') overlay.classList.remove('open'); }, {once:true});
+          }
+        
+          // --- Butona click event ---
+          document.addEventListener('DOMContentLoaded', ()=>{
+            if (btn) {
+              btn.addEventListener('click', e=>{
+                e.preventDefault();
+                openForButton(btn);
+              });
+            }
+          });
+        })();
+    </script>
+</body>
+
+</html>

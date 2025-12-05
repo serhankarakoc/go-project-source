@@ -1,0 +1,122 @@
+Sadece migrate çalıştırma:
+go run database/cmd/main.go -migrate
+
+Sadece seed çalıştırma:
+go run database/cmd/main.go -seed
+
+Hem migrate hem seed çalıştırma
+go run database/cmd/main.go -migrate -seed
+
+postgresql unaccent aktif etme
+CREATE EXTENSION IF NOT EXISTS unaccent;
+
+
+
+
+
+1. Dosya Yükleme İsteklerini Yönetirken Kullanma:
+Diyelim ki bir post resmi yüklemesi yapıyorsun ve yüklenen dosyanın doğru dizine kaydedilmesini ve uzantısının izinli olup olmadığını kontrol etmen gerekiyor. Bu tür bir işlemde GetPath ve IsExtensionAllowed metodlarını kullanabilirsin.
+
+Örnek olarak, bir dosya yükleme handler'ı:
+
+go
+Kopyala
+Düzenle
+package routes
+
+import (
+	"fmt"
+	"zatrano/configs/fileconfig"
+	"github.com/gofiber/fiber/v2"
+	"os"
+	"path/filepath"
+)
+
+func UploadPostFile(c *fiber.Ctx) error {
+	// Kullanıcıdan gelen dosya
+	file, err := c.FormFile("post_image")
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString("Dosya alınırken hata oluştu")
+	}
+
+	// Dosya uzantısını kontrol et
+	ext := filepath.Ext(file.Filename)[1:] // Uzantıyı almak için [1:] kullanılır (örn: jpg yerine jpg)
+
+	if !fileconfig.Config.IsExtensionAllowed("post", ext) {
+		return c.Status(fiber.StatusBadRequest).SendString("Bu dosya tipi kabul edilmiyor")
+	}
+
+	// Dosya yolunu al
+	postPath := fileconfig.Config.GetPath("post")
+
+	// Dosya hedef yolunu oluştur
+	destination := filepath.Join(postPath, file.Filename)
+
+	// Dosyayı belirtilen klasöre kaydet
+	if err := c.SaveFile(file, destination); err != nil {
+		return c.Status(fiber.StatusInternalServerError).SendString("Dosya kaydedilirken hata oluştu")
+	}
+
+	// Başarıyla kaydedildi mesajı
+	return c.SendString(fmt.Sprintf("Dosya başarıyla %s yoluna kaydedildi", destination))
+}
+Bu örnekte:
+
+Dosya Yükleme işlemi sırasında gelen dosyanın uzantısı IsExtensionAllowed metodu ile kontrol ediliyor.
+
+Dosya Yolunu Almak için GetPath("post") kullanılarak dosyanın kaydedileceği dizin elde ediliyor.
+
+2. Dosya Yolu ve Uzantı Kontrolünü Dinamik Kullanma:
+Bir başka kullanım örneği de dosya yükleme işlemini bir API'ye entegre etmek olabilir. Örneğin, bir kullanıcı profil fotoğrafı yüklediğinde, doğru dosya yoluna kaydetmek ve uzantı kontrolü yapmak isteyebilirsin.
+
+go
+Kopyala
+Düzenle
+package routes
+
+import (
+	"fmt"
+	"zatrano/configs/fileconfig"
+	"github.com/gofiber/fiber/v2"
+	"os"
+	"path/filepath"
+)
+
+func UploadProfileImage(c *fiber.Ctx) error {
+	// Kullanıcıdan gelen profil fotoğrafı
+	file, err := c.FormFile("profile_image")
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString("Dosya alınırken hata oluştu")
+	}
+
+	// Dosya uzantısını kontrol et
+	ext := filepath.Ext(file.Filename)[1:] // Uzantıyı almak için [1:] kullanılır (örn: png)
+
+	if !fileconfig.Config.IsExtensionAllowed("profile", ext) {
+		return c.Status(fiber.StatusBadRequest).SendString("Bu dosya tipi kabul edilmiyor")
+	}
+
+	// Dosya yolunu al
+	profilePath := fileconfig.Config.GetPath("profile")
+
+	// Dosya hedef yolunu oluştur
+	destination := filepath.Join(profilePath, file.Filename)
+
+	// Dosyayı belirtilen klasöre kaydet
+	if err := c.SaveFile(file, destination); err != nil {
+		return c.Status(fiber.StatusInternalServerError).SendString("Dosya kaydedilirken hata oluştu")
+	}
+
+	// Başarıyla kaydedildi mesajı
+	return c.SendString(fmt.Sprintf("Profil fotoğrafı başarıyla %s yoluna kaydedildi", destination))
+}
+3. Genel Dosya Yönetimi:
+Bunları ayrıca dosya yöneticisi veya yönetim paneli gibi yerlerde de kullanabilirsin. Örneğin, bir kullanıcıya dosya yükleme, silme veya düzenleme gibi işlemler yapabilme yetkisi verdiğinde, doğru dizine ve uzantılara yönelik kontrol yapabilirsin.
+
+4. Dosya İndirme ve İzin Kontrolü:
+Bir kullanıcıya daha önce yüklediği dosyayı indirme imkanı tanıdığında da bu yapıyı kullanabilirsin. Yüklenen dosyaların doğru dizinlerde olup olmadığını kontrol etmek için GetPath fonksiyonunu kullanabilirsin.
+
+Özetle:
+GetPath ve IsExtensionAllowed fonksiyonları, dosya yönetiminin doğru dosya dizinlerinde ve uygun dosya türleriyle yapılmasını sağlar.
+
+Bu fonksiyonları, dosya yükleme, dosya yolu oluşturma ve dosya uzantısı kontrolü gerektiren her türlü işlemde kullanabilirsin.

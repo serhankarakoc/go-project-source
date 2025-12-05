@@ -1,0 +1,47 @@
+{{if eq .Invitation.Category.Template "title"}}
+<div id="headline" class="content-item text-white">{{ .Invitation.InvitationDetail.Title }}</div>
+<div id="description" class="content-item text-white">{{ .Invitation.Description }}</div>
+{{else if eq .Invitation.Category.Template "online"}}
+<div id="headline" class="content-item text-white">{{ .Invitation.InvitationDetail.Title }}</div>
+<div id="description" class="content-item text-white">{{ .Invitation.Description }}</div>
+{{else if eq .Invitation.Category.Template "person"}}
+<div id="headline" class="content-item text-white">{{ .Invitation.InvitationDetail.Person }}</div>
+<div id="description" class="content-item text-white">{{ .Invitation.Description }}</div>
+{{else if eq .Invitation.Category.Template "person-family"}}
+<div id="headline" class="content-item text-white">{{ .Invitation.InvitationDetail.Person }}</div>
+<div id="description" class="content-item text-white">{{ .Invitation.Description }}</div>
+
+<div id="family" class="content-item text-white flex items-center justify-center w-full">
+    <div class="text-center w-1/2">
+        <p class="font-bold">Annesi</p>
+        <hr class="border-white mx-auto w-1/2">
+        <p class="family">{{ .Invitation.InvitationDetail.MotherName }} {{ .Invitation.InvitationDetail.MotherSurname }}</p>
+    </div>
+    <div class="text-center w-1/2">
+        <p class="font-bold">Babası</p>
+        <hr class="border-white mx-auto w-1/2">
+        <p class="family">{{ .Invitation.InvitationDetail.FatherName }} {{ .Invitation.InvitationDetail.FatherSurname }}</p>
+    </div>
+</div>
+
+<div id="headline" class="content-item text-white">{{ .Invitation.InvitationDetail.Person }}</div>
+<div id="description" class="content-item text-white">{{ .Invitation.Description }}</div>
+{{else if eq .Invitation.Category.Template "wedding"}}
+<div id="headline" class="content-item text-white">{{ .Invitation.InvitationDetail.BrideName }} & {{ .Invitation.InvitationDetail.GroomName }}</div>
+<div id="description" class="content-item text-white">{{ .Invitation.Description }}</div>
+
+<div id="family" class="content-item text-white flex items-center justify-center w-full">
+    <div class="text-center w-1/2">
+        <p class="font-bold">Ailesi</p>
+        <hr class="border-white mx-auto w-1/2">
+        <p class="family">{{ .Invitation.InvitationDetail.BrideMotherName }} {{ .Invitation.InvitationDetail.BrideMotherSurname }}</p>
+        <p class="family" >{{ .Invitation.InvitationDetail.BrideFatherName }} {{ .Invitation.InvitationDetail.BrideFatherSurname }}</p>
+    </div>
+    <div class="text-center w-1/2">
+        <p class="font-bold">Ailesi</p>
+        <hr class="border-white mx-auto w-1/2">
+        <p class="family">{{ .Invitation.InvitationDetail.GroomMotherName }} {{ .Invitation.InvitationDetail.GroomMotherSurname }}</p>
+        <p class="family" >{{ .Invitation.InvitationDetail.GroomFatherName }} {{ .Invitation.InvitationDetail.GroomFatherSurname }}</p>
+    </div>
+</div>
+{{end}}

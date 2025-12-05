@@ -1,0 +1,93 @@
+<div class="auth-body">
+    <form id="registerForm" method="POST" action="/auth/register">
+        <input type="hidden" name="csrf_token" value="{{ .CsrfToken }}">
+        
+        <div class="form-group">
+            <label class="form-label" for="registerName">Ad Soyad</label>
+            <div class="input-group">
+                <div class="input-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <input 
+                    type="text" 
+                    class="form-control" 
+                    id="registerName" 
+                    name="name" 
+                    placeholder="Adınızı girin" 
+                    required
+                >
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="registerEmail">E-posta</label>
+            <div class="input-group">
+                <div class="input-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <input 
+                    type="email" 
+                    class="form-control" 
+                    id="registerEmail" 
+                    name="email" 
+                    placeholder="E-posta adresiniz" 
+                    required
+                >
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="registerPassword">Şifre</label>
+            <div class="input-group">
+                <div class="input-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <input 
+                    type="password" 
+                    class="form-control" 
+                    id="registerPassword" 
+                    name="password" 
+                    placeholder="Şifre oluşturun" 
+                    required
+                >
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="registerPassword2">Şifre (Tekrar)</label>
+            <div class="input-group">
+                <div class="input-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <input 
+                    type="password" 
+                    class="form-control" 
+                    id="registerPassword2" 
+                    name="confirm_password" 
+                    placeholder="Şifrenizi tekrar girin" 
+                    required
+                >
+            </div>
+        </div>
+
+        <button type="submit" class="btn-auth">
+            <i class="fas fa-user-plus me-2"></i>Kayıt Ol
+        </button>
+        
+        <div class="auth-separator">
+            <span>veya</span>
+        </div>
+        
+        <button type="button" class="btn btn-google" onclick="window.location.href='/auth/google/login'">
+            <i class="fab fa-google me-2"></i>Google ile Kayıt Ol
+        </button>
+        
+        </form>
+
+    <div class="auth-footer">
+        <p class="auth-helper-text">
+            Zaten hesabınız var mı? <a href="/auth/login" class="link auth-link-small">Giriş Yap</a>
+        </p>
+        
+        </div>
+</div>

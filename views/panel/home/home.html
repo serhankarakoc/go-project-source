@@ -1,0 +1,92 @@
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2 fw-bold">{{.Title}}</h1>
+</div>
+
+<div class="card shadow-sm border-0 rounded-4 animate-fadeInUp">
+  <div class="card-body p-4">
+
+    <div class="text-center mb-4">
+      <h4 class="fw-bold mb-3">Dijital Davetiye Yönetim Paneli</h4>
+      <div class="d-inline-flex align-items-center px-4 py-3 rounded-pill shadow-sm bg-light-subtle border">
+        <i class="bi bi-envelope-paper-heart-fill text-primary fs-4 me-2"></i>
+        <span class="fw-semibold text-dark me-2">Oluşturduğunuz Davetiye Sayısı:</span>
+        <span class="fw-bold text-primary fs-5">{{ .InvitationCount }}</span>
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center bg-info bg-opacity-10 border-start border-4 border-info rounded-3 p-3 mb-4">
+      <i class="bi bi-info-circle-fill text-info fs-4 me-3"></i>
+      <p class="mb-0 text-secondary-emphasis fw-medium">
+        Davetiyenizi kişiselleştirmek ve tüm detayları misafirlerinizle paylaşmak için aşağıdaki alanları kullanabilirsiniz.
+      </p>
+    </div>
+
+    <div class="d-flex align-items-start bg-warning bg-opacity-10 border-start border-4 border-warning rounded-3 p-3 mb-4">
+      <i class="bi bi-gem text-warning fs-4 me-3 mt-1"></i>
+      <div>
+        <h5 class="fw-bold mb-2">Premium Özellikleri Keşfedin</h5>
+        <ul class="list-unstyled mb-3">
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Reklamsız Kullanım:</strong> Misafirleriniz için tamamen reklamsız bir davetiye deneyimi.</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Gelişmiş LCV Takibi:</strong> Kimlerin katılacağını anlık olarak takip edin ve etkinliğinizi daha iyi planlayın.</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Özel Tasarım Yükleme:</strong> Kendi tasarımlarınızı yükleyerek davetiyenizi tamamen benzersiz kılın.</li>
+        </ul>
+        <p class="mb-0 fw-medium">
+          Bu premium özellikleri davetiyenize eklemek için öncelikle davetiyenizi oluşturup kaydedin. Ardından, <strong>'Davetiyelerim'</strong> listenizden ilgili davetiyeyi bularak altındaki <strong>'Premiuma Yükselt'</strong> butonuna tıklamanız yeterlidir.
+        </p>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-md-6">
+        <ul class="list-unstyled p-0 m-0">
+          <li class="d-flex align-items-start mb-3">
+            <i class="bi bi-grid-fill text-primary me-3 fs-5 mt-1"></i>
+            <div><strong>Etkinlik Türü:</strong> Davetiyenizin amacını belirleyin (Düğün, nişan, doğum günü vb.).</div>
+          </li>
+          <li class="d-flex align-items-start mb-3">
+            <i class="bi bi-fonts text-success me-3 fs-5 mt-1"></i>
+            <div><strong>Ana Başlık:</strong> Misafirlerinizin göreceği ilk etkileyici başlığı yazın.</div>
+          </li>
+          <li class="d-flex align-items-start mb-3">
+            <i class="bi bi-calendar2-event-fill text-danger me-3 fs-5 mt-1"></i>
+            <div><strong>Tarih ve Saat:</strong> Etkinliğinizin net başlangıç zamanını ekleyin.</div>
+          </li>
+          <li class="d-flex align-items-start mb-3">
+            <i class="bi bi-images text-warning me-3 fs-5 mt-1"></i>
+            <div><strong>Kapak Fotoğrafı:</strong> Davetiyenizi görsel olarak zenginleştirecek bir resim yükleyin.</div>
+          </li>
+          <li class="d-flex align-items-start">
+            <i class="bi bi-toggle-on text-secondary me-3 fs-5 mt-1"></i>
+            <div><strong>Görünürlük Durumu:</strong> Davetiyenizi istediğiniz zaman aktif veya pasif yapın.</div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-md-6">
+        <ul class="list-unstyled p-0 m-0">
+          <li class="d-flex align-items-start mb-3">
+            <i class="bi bi-geo-alt-fill text-danger me-3 fs-5 mt-1"></i>
+            <div><strong>Konum Bilgisi:</strong> Etkinlik adresini ve harita konumunu kolayca ekleyin.</div>
+          </li>
+          <li class="d-flex align-items-start mb-3">
+            <i class="bi bi-telephone-inbound-fill text-success me-3 fs-5 mt-1"></i>
+            <div><strong>İletişim Numarası:</strong> Organizasyonla ilgili sorular için bir telefon numarası belirtin.</div>
+          </li>
+          <li class="d-flex align-items-start mb-3">
+            <i class="bi bi-pencil-fill text-info me-3 fs-5 mt-1"></i>
+            <div><strong>Açıklama ve Notlar:</strong> Etkinlik hakkında ek bilgiler veya özel notlarınızı paylaşın.</div>
+          </li>
+          <li class="d-flex align-items-start mb-3">
+            <i class="bi bi-check2-square text-primary me-3 fs-5 mt-1"></i>
+            <div><strong>LCV (Lütfen Cevap Veriniz):</strong> Katılım durumunu öğrenmek için misafirlerinizden geri bildirim isteyin.</div>
+          </li>
+           <li class="d-flex align-items-start">
+            <i class="bi bi-sliders text-warning me-3 fs-5 mt-1"></i>
+            <div><strong>Özelleştirilebilir Alanlar:</strong> Seçtiğiniz kategoriye özel ek alanları doldurun.</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>

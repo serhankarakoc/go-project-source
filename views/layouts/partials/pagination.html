@@ -1,0 +1,91 @@
+{{define "pagination"}}
+{{if gt .Result.Meta.TotalItems 0}}
+<div class="mt-4">
+    <nav aria-label="Sayfalama">
+        <ul class="pagination justify-content-center mb-0">
+            <!-- Önceki butonu -->
+            <li class="page-item {{if eq .Result.Meta.CurrentPage 1}}disabled{{end}}">
+                <a class="page-link" 
+                   href="{{if gt .Result.Meta.CurrentPage 1}}?page={{.Result.Meta.CurrentPage | Subtract 1}}&perPage={{.Params.PerPage}}&name={{.Params.Name | urlquery}}{{else}}#{{end}}"
+                   aria-label="Önceki">
+                    Önceki
+                </a>
+            </li>
+            
+            {{ $totalPages := .Result.Meta.TotalPages }}
+            {{ $currentPage := .Result.Meta.CurrentPage }}
+            {{ $params := .Params }}
+            
+            <!-- Sayfa numaraları -->
+            {{if le $totalPages 7}}
+                <!-- 7 sayfadan azsa tümünü göster -->
+                {{range $i := Iterate 1 $totalPages}}
+                    <li class="page-item {{if eq $i $currentPage}}active{{end}}">
+                        <a class="page-link" 
+                           href="?page={{$i}}&perPage={{$params.PerPage}}&name={{$params.Name | urlquery}}">
+                            {{$i}}
+                        </a>
+                    </li>
+                {{end}}
+            {{else}}
+                <!-- Çok sayfa varsa akıllı gösterim -->
+                {{if gt $currentPage 4}}
+                    <li class="page-item">
+                        <a class="page-link" 
+                           href="?page=1&perPage={{$params.PerPage}}&name={{$params.Name | urlquery}}">
+                            1
+                        </a>
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                {{end}}
+                
+                {{ $startPage := Max 1 (Subtract $currentPage 2) }}
+                {{ $endPage := Min $totalPages (Add $currentPage 2) }}
+                
+                {{range $i := Iterate $startPage $endPage}}
+                    <li class="page-item {{if eq $i $currentPage}}active{{end}}">
+                        <a class="page-link" 
+                           href="?page={{$i}}&perPage={{$params.PerPage}}&name={{$params.Name | urlquery}}">
+                            {{$i}}
+                        </a>
+                    </li>
+                {{end}}
+                
+                {{if lt $currentPage (Subtract $totalPages 3)}}
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" 
+                           href="?page={{$totalPages}}&perPage={{$params.PerPage}}&name={{$params.Name | urlquery}}">
+                            {{$totalPages}}
+                        </a>
+                    </li>
+                {{end}}
+            {{end}}
+            
+            <!-- Sonraki butonu -->
+            <li class="page-item {{if eq .Result.Meta.CurrentPage $totalPages}}disabled{{end}}">
+                <a class="page-link" 
+                   href="{{if lt .Result.Meta.CurrentPage $totalPages}}?page={{.Result.Meta.CurrentPage | Add 1}}&perPage={{.Params.PerPage}}&name={{.Params.Name | urlquery}}{{else}}#{{end}}"
+                   aria-label="Sonraki">
+                    Sonraki
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <!-- Sayfa bilgisi -->
+    <div class="text-center text-muted small mt-2">
+        {{.Result.Meta.TotalItems}} kayıt - Sayfa {{.Result.Meta.CurrentPage}} / {{.Result.Meta.TotalPages}}
+        (Sayfa başına: {{.Params.PerPage}} kayıt)
+    </div>
+</div>
+{{else}}
+<div class="text-muted small text-center mt-4">
+    Kayıt bulunamadı.
+</div>
+{{end}}
+{{end}}
