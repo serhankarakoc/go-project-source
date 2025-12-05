@@ -1,0 +1,51 @@
+package routes
+
+import (
+	handlers "zatrano/handlers/website"
+
+	"github.com/gofiber/fiber/v2"
+)
+
+func registerWebsiteRoutes(app *fiber.App) {
+	websiteHandler := handlers.NewWebsiteHandler()
+	app.Get("/", websiteHandler.HomePage)
+	app.Get("/kullanim-sartlari", websiteHandler.KullanimSartlari)
+	app.Get("/dijital-acilis-davetiyesi", websiteHandler.Acilis)
+	app.Get("/dijital-after-party-davetiyesi", websiteHandler.AfterParty)
+	app.Get("/dijital-anitkabir-ziyareti-davetiyesi", websiteHandler.AnitkabirZiyareti)
+	app.Get("/dijital-asker-eglencesi-davetiyesi", websiteHandler.AskerEglencesi)
+	app.Get("/dijital-baby-shower-davetiyesi", websiteHandler.BabyShower)
+	app.Get("/dijital-balo-davetiyesi", websiteHandler.Balo)
+	app.Get("/dijital-bekarliga-veda-davetiyesi", websiteHandler.BekarligaVeda)
+	app.Get("/dijital-cinsiyet-partisi-davetiyesi", websiteHandler.CinsiyetPartisi)
+	app.Get("/dijital-defile-davetiyesi", websiteHandler.Defile)
+	app.Get("/dijital-dini-toren-davetiyesi", websiteHandler.DiniToren)
+	app.Get("/dijital-dogum-gunu-davetiyesi", websiteHandler.DogumGunu)
+	app.Get("/dijital-dugun-davetiyesi", websiteHandler.Dugun)
+	app.Get("/dijital-egitim-davetiyesi", websiteHandler.Egitim)
+	app.Get("/dijital-festival-davetiyesi", websiteHandler.Festival)
+	app.Get("/dijital-film-galasi-davetiyesi", websiteHandler.FilmGalasi)
+	app.Get("/dijital-fuar-davetiyesi", websiteHandler.Fuar)
+	app.Get("/dijital-gelin-hamami-davetiyesi", websiteHandler.GelinHamami)
+	app.Get("/dijital-gezi-davetiyesi", websiteHandler.Gezi)
+	app.Get("/dijital-kamp-davetiyesi", websiteHandler.Kamp)
+	app.Get("/dijital-kina-gecesi-davetiyesi", websiteHandler.KinaGecesi)
+	app.Get("/dijital-konferans-davetiyesi", websiteHandler.Konferans)
+	app.Get("/dijital-kongre-davetiyesi", websiteHandler.Kongre)
+	app.Get("/dijital-konser-davetiyesi", websiteHandler.Konser)
+	app.Get("/dijital-lansman-davetiyesi", websiteHandler.Lansman)
+	app.Get("/dijital-mezuniyet-davetiyesi", websiteHandler.Mezuniyet)
+	app.Get("/dijital-nikah-toreni-davetiyesi", websiteHandler.NikahToreni)
+	app.Get("/dijital-nisan-davetiyesi", websiteHandler.Nisan)
+	app.Get("/dijital-online-etkinlik-davetiyesi", websiteHandler.OnlineEtkinlik)
+	app.Get("/dijital-seminer-davetiyesi", websiteHandler.Seminer)
+	app.Get("/dijital-sergi-davetiyesi", websiteHandler.Sergi)
+	app.Get("/dijital-spor-musabakasi-davetiyesi", websiteHandler.SporMusabakasi)
+	app.Get("/dijital-sunnet-dugunu-davetiyesi", websiteHandler.SunnetDugunu)
+	app.Get("/dijital-tanitim-davetiyesi", websiteHandler.Tanitim)
+	app.Get("/dijital-tiyatro-gosterisi-davetiyesi", websiteHandler.TiyatroGosterisi)
+	app.Get("/dijital-toplanti-davetiyesi", websiteHandler.Toplanti)
+	app.Get("/dijital-veda-partisi-davetiyesi", websiteHandler.VedaPartisi)
+	app.Get("/dijital-yilbasi-partisi-davetiyesi", websiteHandler.YilbasiPartisi)
+	app.Get("/dijital-yildonumu-davetiyesi", websiteHandler.Yildonumu)
+}
